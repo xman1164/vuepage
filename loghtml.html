@@ -1,0 +1,142 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+
+    <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+
+    <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+
+    <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=YES, minimal-ui">
+    <script src="https://cdn.jsdelivr.net/npm/signature_pad@2.3.2/dist/signature_pad.min.js"></script>
+
+
+</head>
+
+<body>
+
+<div id="app">
+
+    <v-app>
+
+        <v-main>
+       
+       <v-card class="mx-auto" max-width="500">
+
+          <v-card v-for="(item, index) in loglist" :key="item" :id="item" >
+
+            <v-list-item three-line>
+              <v-list-item-content>
+                <v-list-item-title>
+                <span style="float:left">
+                 {{index+1}} 執行:{{tasknames(item.taskname)}}
+                  <v-btn elevation="2" color="primary" @click='dojob(item.taskname,item.oid,item.dtime)'>執行</v-btn>
+               </span>
+                </v-list-item-title>
+
+                <v-list-item-subtitle>
+                  <b>
+                    OID:{{item.oid}} <br>
+                  </b>
+                </v-list-item-subtitle>
+                <v-list-item-subtitle>
+                  <b>
+                    時間:{{item.dtime}} <br>
+                    位置:{{item.co}} <br>
+                    
+                  </b>
+                </v-list-item-subtitle>
+                <v-list-item-subtitle>
+                  <b>
+                   
+                    {{item.road}}
+                  </b>
+                </v-list-item-subtitle>
+                
+              </v-list-item-content>
+            </v-list-item>
+            <hr size="1px" align="center" width="100%" Color="gray" />
+          </v-card>
+
+
+        </v-card>
+         
+           
+        </v-main>
+
+    </v-app>
+
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+
+<script>
+
+    var vm = new Vue({
+              el: '#app',
+              data: {loglist:[{"co":"文山區-SHZ2-","dtime":"2021/11/10 09:56:49","errdesign":"","isCheck":"1","oid":"11947","remark":"測試一下","road":"木柵路五段43巷","taskname":"updateCLSData","updater":"xman1164","width":"8"},{"co":"文山區-SHZ2-","dtime":"2021/11/10 09:56:54","errdesign":"","isCheck":"1","oid":"11950","remark":"測試一下","road":"木柵路五段43巷","taskname":"updateCLSData","updater":"xman1164","width":"8"}]},
+          watch: {
+            
+            
+          },created() {
+          
+          callAppCmd("readlog","callback5","");
+ 
+ },
+              methods: {
+              tasknames:function(name){
+              if(name=='updateCLSData')
+              return '回報資料'              
+              else
+              return '回報改善圖'},              
+              readlog:function() {
+              // show log
+   
+  },
+              dojob:function(taskname,oid,dtime){
+              var obj = new Object()
+              obj.cmd=taskname
+              obj.oid=oid
+              obj.dtime=dtime
+              var jsonString= JSON.stringify(obj);
+               callAppCmd("dojob",jsonString,"callback4");
+
+              },
+              doresult:function() {
+              // show redo result
+   
+  },
+    
+          },
+              vuetify: new Vuetify(),
+            })
+          function callback5(result){
+                // log reading
+            vm.$options.methods.readlog(result);
+            }
+            function callback4(result){
+                // log redo result
+            vm.$options.methods.doresult(result);
+            }
+            
+         function callAppCmd (cmd, params, callback, exParams) {
+             if (window.webkit != undefined) {
+                  window.webkit.messageHandlers.sayhello.postMessage({cmds:cmd,paras:params,callbacks:callback,expara:exParams});
+                } else if (window.JavaScriptInterface != undefined) {
+                    window.JavaScriptInterface.callAppCmd (cmd, params, callback, exParams);
+                    }
+          }
+
+  </script>
+  
+
+</body>
+
+</html>

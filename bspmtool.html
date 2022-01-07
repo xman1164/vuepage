@@ -1,0 +1,201 @@
+<!DOCTYPE html>
+
+<html>
+
+<head>
+<meta http-equiv="Content-Type" content="text/html; charset=utf-8">
+<script src="https://www.gstatic.com/firebasejs/5.0.2/firebase-app.js"></script>
+<script src="https://www.gstatic.com/firebasejs/5.0.2/firebase-database.js"></script>
+  <link href="https://fonts.googleapis.com/css?family=Roboto:100,300,400,500,700,900" rel="stylesheet">
+
+  <link href="https://cdn.jsdelivr.net/npm/@mdi/font@4.x/css/materialdesignicons.min.css" rel="stylesheet">
+
+  <link href="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.min.css" rel="stylesheet">
+
+  <meta name="viewport" content="width=device-width, initial-scale=1, user-scalable=YES, minimal-ui">
+
+</head>
+
+<body>
+
+<div id="app">
+
+  <v-app>
+
+    <v-main>
+    <v-row>
+          <v-col class="d-flex" cols="12" sm="3">
+   <v-btn depressed color="primary"  @click="getdata()">
+   
+                  取單
+                </v-btn></v-col> <v-col class="d-flex" cols="12" sm="3">
+                <v-btn depressed color="primary"  @click="sentjoblist()">
+   
+                  取代辦清單
+                </v-btn></v-col>
+                 <v-col class="d-flex" cols="12" sm="3">
+                <v-btn depressed color="primary"  @click="">
+   
+                  取代發料清單
+                </v-btn></v-col>
+              <v-col class="d-flex" cols="12" sm="3">
+                <v-btn depressed color="primary"  @click="getdata()">
+   
+                  傳送條碼
+                </v-btn></v-col>
+          
+              </v-row>
+            
+          
+          <v-row> <v-col class="d-flex" cols="12" sm="12">SN: <b>{{item.sn}}</b></v-col></v-row>
+          <v-row><v-col class="d-flex" cols="12" sm="12">帳號: <b>{{item.ldap}}</b></v-col></v-row>
+          <v-row><v-col class="d-flex" cols="12" sm="12">密碼: <b>{{item.pwd}}</b></v-col></v-row>
+          <v-row><v-col class="d-flex" cols="12" sm="12">作業名稱: <b>{{item.taskname}}</b></v-col></v-row>
+          <v-row><v-col class="d-flex" cols="12" sm="12">號碼參數: <b>{{item.para}}</b></v-col></v-row>
+
+          
+          
+              
+            
+            <v-col class="d-flex" cols="12" sm="12">
+            代辦清單:<v-text-field solo v-model="joblist"
+              label="代辦清單"
+            ></v-text-field>
+            </v-col>
+              </v-row>
+              <v-row>
+              <v-col class="d-flex" cols="12" sm="12">
+              發料清單:<v-text-field solo
+              label="發料清單"
+            ></v-text-field>
+            </v-col>
+              </v-row>
+              <v-row>
+              <v-col class="d-flex" cols="12" sm="6">
+              階段:<v-text-field solo
+              label="階段"
+            ></v-text-field>
+            </v-col>
+            <v-col class="d-flex" cols="12" sm="6">
+              結果:<v-text-field solo
+              label="結果"
+            ></v-text-field>
+            </v-col>
+              </v-row>
+              <table  style="border:3px #cccccc solid;" border='1'>
+                 
+                 <tr v-for="(item , index) in barcodelists" :key="item.barcode" :id="item.barcode">
+                   <td>
+                     {{item.type}}
+                   </td>
+                   <td>
+                    {{barcodelists[index].barcode}}
+                    
+
+                   </td>
+                   
+                 </tr>
+               </table>
+
+    </v-main>
+
+  </v-app>
+
+</div>
+
+
+
+<script src="https://cdn.jsdelivr.net/npm/vue@2.x/dist/vue.js"></script>
+
+<script src="https://cdn.jsdelivr.net/npm/vuetify@2.x/dist/vuetify.js"></script>
+
+<script>
+ callAppCmd('getldap','','callback2','');
+    var vm = new Vue({
+              el: '#app',
+             
+              data: {datalist:[],item:{},joblist:'',barcodelists:[],
+          },watch: {
+          
+
+          },
+              methods: {
+               sentjoblist:function()
+              {
+                sentjoblist()
+             
+              },
+              getdata:function()
+              {
+                 if(vm.datalist.length>0)
+                 {
+                   for(var i=0;i<vm.datalist.length;i++)
+                   {
+                     var item=vm.datalist[i]
+                     if (item.status=='等待')
+                     {
+                       vm.item=item
+                       vm.barcodelists=vm.item.barcodelist
+                     }
+                   }
+                 }
+              
+              }
+          },
+              vuetify: new Vuetify(),
+            })
+
+function sentjoblist(){
+ database.ref('tasklist/'+vm.item.sn+"/").update({result:vm.joblist}); 
+ alert('tasklist/'+vm.item.sn+"/");
+};
+           
+function show(){
+ var leadsRef = database.ref('tasklist');
+leadsRef.on('value', function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+      var childData = childSnapshot.val();
+    });
+});
+};
+
+            function callAppCmd (cmd, params, callback, exParams) {
+             if (window.webkit != undefined) {
+                  window.webkit.messageHandlers.sayhello.postMessage({cmds:cmd,paras:params,callbacks:callback,expara:exParams});
+                } else if (window.JavaScriptInterface != undefined) {
+                    window.JavaScriptInterface.callAppCmd (cmd, params, callback, exParams);
+                    }
+          }
+  </script>
+
+  <script >
+   
+  const firebaseConfig = {
+  apiKey: "AIzaSyD8iRR26dZG0wvz0xzCStgwX_qtw4DYhE0",
+  authDomain: "query-4bee2.firebaseapp.com",
+  databaseURL: "https://query-4bee2-default-rtdb.firebaseio.com",
+  projectId: "query-4bee2",
+  storageBucket: "query-4bee2.appspot.com",
+  messagingSenderId: "967485373285",
+  appId: "1:967485373285:web:527d811aebadb5a8f97f8c"
+  };
+
+  // Initialize Firebase
+  firebase.initializeApp(firebaseConfig);
+  const database = firebase.database();
+ 
+ var leadsRef = database.ref('tasklist');
+ 
+leadsRef.on('value', function(snapshot) {
+    snapshot.forEach(function(childSnapshot) {
+      var childData = childSnapshot.val();
+      vm.datalist.push(childData);
+    });
+});
+
+
+</script>
+
+</body>
+
+</html>

@@ -31,18 +31,10 @@
                 </v-btn></v-col> <v-col class="d-flex" cols="12" sm="3">
                 <v-btn depressed color="primary"  @click="sentjoblist()">
    
-                  取代辦清單
+                  送出
+                  
                 </v-btn></v-col>
-                 <v-col class="d-flex" cols="12" sm="3">
-                <v-btn depressed color="primary"  @click="">
    
-                  取代發料清單
-                </v-btn></v-col>
-              <v-col class="d-flex" cols="12" sm="3">
-                <v-btn depressed color="primary"  @click="getdata()">
-   
-                  傳送條碼
-                </v-btn></v-col>
           
               </v-row>
             
@@ -56,28 +48,25 @@
           
           
               
-            
+            <v-row>
             <v-col class="d-flex" cols="12" sm="12">
-            代辦清單:<v-text-field solo v-model="joblist"
-              label="代辦清單"
+            文字結果:<v-text-field solo v-model="joblist"
+              label="文字結果"
             ></v-text-field>
+            
             </v-col>
               </v-row>
               <v-row>
               <v-col class="d-flex" cols="12" sm="12">
-              發料清單:<v-text-field solo
-              label="發料清單"
+              圖片結果:<v-text-field solo  v-model="image"
+              label="圖片結果"
             ></v-text-field>
             </v-col>
               </v-row>
               <v-row>
-              <v-col class="d-flex" cols="12" sm="6">
-              階段:<v-text-field solo
-              label="階段"
-            ></v-text-field>
-            </v-col>
+            
             <v-col class="d-flex" cols="12" sm="6">
-              結果:<v-text-field solo
+              結果:<v-text-field solo v-model="result"
               label="結果"
             ></v-text-field>
             </v-col>
@@ -114,7 +103,7 @@
     var vm = new Vue({
               el: '#app',
              
-              data: {datalist:[],item:{},joblist:'',barcodelists:[],
+              data: {datalist:[],item:{},joblist:'',image:'',result:'',barcodelists:[],
           },watch: {
           
 
@@ -146,7 +135,9 @@
             })
 
 function sentjoblist(){
- database.ref('tasklist/'+vm.item.sn+"/").update({result:vm.joblist}); 
+ database.ref('tasklist/'+vm.item.sn+"/").update({content:vm.joblist}); 
+ database.ref('tasklist/'+vm.item.sn+"/").update({its:vm.image}); 
+ database.ref('tasklist/'+vm.item.sn+"/").update({status:vm.result});
  alert('tasklist/'+vm.item.sn+"/");
 };
            

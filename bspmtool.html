@@ -47,7 +47,14 @@
 
           
           
-              
+              <v-row>
+            
+            <v-col class="d-flex" cols="12" sm="6">
+              結果:<v-text-field solo v-model="result"
+              label="結果"
+            ></v-text-field>
+            </v-col>
+              </v-row>
             <v-row>
             <v-col class="d-flex" cols="12" sm="12">
             文字結果:<v-text-field solo v-model="joblist"
@@ -58,19 +65,15 @@
               </v-row>
               <v-row>
               <v-col class="d-flex" cols="12" sm="12">
-              圖片結果:<v-text-field solo  v-model="image"
-              label="圖片結果"
-            ></v-text-field>
+              圖片結果:
+              <v-textarea
+            name="input-7-1"
+            label="base64 code"
+            v-model="image"
+          ></v-textarea>
             </v-col>
               </v-row>
-              <v-row>
-            
-            <v-col class="d-flex" cols="12" sm="6">
-              結果:<v-text-field solo v-model="result"
-              label="結果"
-            ></v-text-field>
-            </v-col>
-              </v-row>
+              
               <table  style="border:3px #cccccc solid;" border='1'>
                  
                  <tr v-for="(item , index) in barcodelists" :key="item.barcode" :id="item.barcode">

@@ -1,0 +1,14 @@
+<html>
+<script src="https://unpkg.com/amazon-lex-web-chat/dist/lex-web-chat.js"></script>
+<script>
+    document.addEventListener('DOMContentLoaded', function () {
+        window.LexWebChat.open({
+            botAliasId: "TSTALIASID",
+            botId: "RYVD8DYTSO",
+            region: "us-east-1", // 替换为您的 AWS 区域
+            sessionAttributes: {},
+            text: "Hello! How can I assist you?",
+        });
+    });
+</script>
+</html>

@@ -1,14 +1,22 @@
 <html>
-<script src="https://unpkg.com/amazon-lex-web-chat/dist/lex-web-chat.js"></script>
+<script src="https://d2czu9g9d2lnuf.cloudfront.net/lex-web-ui-loader.min.js"></script>
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        window.LexWebChat.open({
-            botAliasId: "TSTALIASID",
-            botId: "RYVD8DYTSO",
-            region: "us-east-1", // 替换为您的 AWS 区域
-            sessionAttributes: {},
-            text: "Hello! How can I assist you?",
-        });
-    });
+  var loaderOpts = {
+    baseUrl: 'https://d2czu9g9d2lnuf.cloudfront.net/',
+    shouldLoadMinDeps: true
+  };
+  var loader = new ChatBotUiLoader.IframeLoader(loaderOpts);
+  var chatbotUiConfig = {
+          /* Example of setting session attributes on parent page
+          lex: {
+            sessionAttributes: {
+              userAgent: navigator.userAgent,
+              QNAClientFilter: ''
+            }
+          }
+          */
+        };
+  loader.load(chatbotUiConfig)
+    .catch(function (error) { console.error(error); });
 </script>
 </html>

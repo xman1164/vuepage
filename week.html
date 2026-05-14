@@ -514,11 +514,11 @@ function renderIdentity() {
       <div class="identity-card fade-up">
         <h2>👋 你好</h2>
         <p>選擇你的身份，開始更新工作進度</p>
-        <select class="identity-select" id="identitySelect" onchange="document.getElementById('identityEnter').disabled=!this.value">
+        <select class="identity-select" id="identitySelect">
           <option value="">— 請選擇 —</option>
           ${opts}
         </select>
-        <button class="identity-enter" id="identityEnter" disabled onclick="enterApp()">進入</button>
+        <button class="identity-enter" id="identityEnter" onclick="window.enterApp()">進入</button>
       </div>
     </div>
   `;
@@ -593,11 +593,10 @@ let editTaskStatus = "";
 
 window.enterApp = function() {
   const sel = document.getElementById("identitySelect");
-  if (sel && sel.value) {
-    currentUser = sel.value;
-    localStorage.setItem("tracker-user", currentUser);
-    render();
-  }
+  if (!sel || !sel.value) { alert("請先選擇你的身份"); return; }
+  currentUser = sel.value;
+  localStorage.setItem("tracker-user", currentUser);
+  render();
 };
 
 window.switchUser = function() {

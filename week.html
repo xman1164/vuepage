@@ -514,18 +514,13 @@ function renderIdentity() {
       <div class="identity-card fade-up">
         <h2>👋 你好</h2>
         <p>選擇你的身份，開始更新工作進度</p>
-        <select class="identity-select" id="identitySelect">
+        <select class="identity-select" id="identitySelect" onchange="document.getElementById('identityEnter').disabled=!this.value">
           <option value="">— 請選擇 —</option>
           ${opts}
         </select>
         <button class="identity-enter" id="identityEnter" disabled onclick="enterApp()">進入</button>
       </div>
     </div>
-    <script>
-      document.getElementById("identitySelect")?.addEventListener("change", function() {
-        document.getElementById("identityEnter").disabled = !this.value;
-      });
-    <\/script>
   `;
 }
 

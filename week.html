@@ -298,6 +298,19 @@ function initListeners() {
 /* ════════════════════════════════
    FIREBASE OPERATIONS
    ════════════════════════════════ */
+let showNewProject = false;
+let newProjectName = "";
+let newProjectPriority = "normal";
+
+async function fbAddProject(name, priority) {
+  try {
+    await addDoc(collection(db, "projects"), {
+      name, priority, createdBy: currentUser, createdAt: serverTimestamp(),
+    });
+    toast("已建立專案");
+  } catch (e) { toast("建立失敗：" + e.message); }
+}
+
 async function fbAddTask(projId, task) {
   try {
     await addDoc(collection(db, "projects", projId, "tasks"), {
@@ -390,9 +403,27 @@ function render() {
     ${counts.map(s => `<button class="filter-chip ${statusFilter === s.value ? 'active' : ''}" onclick="setStatusFilter('${s.value}')">${s.icon} ${s.label} ${s.count}</button>`).join("")}
   </div>`;
 
+  // New project button/form
+  if (!showNewProject) {
+    html += `<button class="add-task-btn" style="margin-bottom:16px;padding:14px;border-radius:var(--radius-lg);font-size:14px;font-weight:500;border-width:2px" onclick="window.showNewProjectForm()"><span style="font-size:20px;font-weight:300">+</span> 建立新專案</button>`;
+  } else {
+    html += `<div style="background:var(--surface);border-radius:var(--radius-lg);padding:20px;margin-bottom:16px;border:1px solid var(--border);display:flex;flex-direction:column;gap:12px" class="fade-up">
+      <div style="font-size:14px;font-weight:600">建立新專案</div>
+      <input class="form-input" id="newProjName" placeholder="專案名稱（例：官網改版）" style="padding:11px 14px;border-radius:var(--radius);border:1.5px solid var(--border);font-size:14px;outline:none;background:var(--bg);width:100%">
+      <div style="font-size:12px;color:var(--text-muted);margin-bottom:2px">重要性</div>
+      <div style="display:flex;gap:6px;flex-wrap:wrap">
+        ${PRIORITIES.map(p => `<button class="status-opt ${newProjectPriority === p.value ? 'active' : ''}" style="padding:5px 11px;border-radius:8px;font-size:12px;background:var(--bg);color:var(--text-secondary);border:1.5px solid var(--border);${newProjectPriority === p.value ? `background:${p.css === 'urgent' ? 'var(--urgent-bg)' : p.css === 'important' ? 'var(--important-bg)' : 'var(--normal-bg)'};color:${p.css === 'urgent' ? 'var(--urgent)' : p.css === 'important' ? 'var(--important)' : 'var(--normal)'};border-color:${p.css === 'urgent' ? 'var(--urgent)' : p.css === 'important' ? 'var(--important)' : 'var(--normal)'};font-weight:600` : ''}" onclick="window.setNewProjPri('${p.value}')">${p.label}</button>`).join("")}
+      </div>
+      <div style="display:flex;gap:8px;justify-content:flex-end">
+        <button style="padding:8px 18px;border-radius:var(--radius);background:var(--bg);color:var(--text-secondary);font-size:13px;font-weight:500" onclick="window.hideNewProject()">取消</button>
+        <button style="padding:8px 18px;border-radius:var(--radius);background:var(--accent);color:#fff;font-size:13px;font-weight:500" onclick="window.doAddProject()">建立</button>
+      </div>
+    </div>`;
+  }
+
   // Empty
   if (filtered.length === 0) {
-    html += `<div class="empty-state fade-up"><div class="empty-icon">📂</div><p class="empty-text">${statusFilter !== "all" || priorityFilter !== "all" ? "此篩選條件下沒有項目" : "目前沒有專案，請等待管理員建立"}</p></div>`;
+    html += `<div class="empty-state fade-up"><div class="empty-icon">📂</div><p class="empty-text">${statusFilter !== "all" || priorityFilter !== "all" ? "此篩選條件下沒有項目" : "還沒有專案，點擊上方按鈕建立"}</p></div>`;
   }
 
   // Projects
@@ -590,6 +621,16 @@ function esc(str) { if (!str) return ""; const d = document.createElement("div")
    ════════════════════════════════ */
 let newTaskStatus = "not_started";
 let editTaskStatus = "";
+
+window.showNewProjectForm = function() { showNewProject = true; render(); setTimeout(() => document.getElementById("newProjName")?.focus(), 50); };
+window.hideNewProject = function() { showNewProject = false; newProjectName = ""; render(); };
+window.setNewProjPri = function(v) { newProjectPriority = v; render(); };
+window.doAddProject = async function() {
+  const name = document.getElementById("newProjName")?.value?.trim();
+  if (!name) { toast("請輸入專案名稱"); return; }
+  await fbAddProject(name, newProjectPriority);
+  showNewProject = false; newProjectName = ""; newProjectPriority = "normal";
+};
 
 window.enterApp = function() {
   const sel = document.getElementById("identitySelect");

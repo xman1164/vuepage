@@ -1,0 +1,574 @@
+<!DOCTYPE html>
+<html lang="zh-TW">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>專案追蹤器 — 管理版</title>
+<link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root {
+  --bg:#f5f3f0;--surface:#fff;--surface-hover:#fafaf8;--border:#e8e5e0;--border-light:#f0ede8;
+  --text:#1a1816;--text2:#6b6560;--text3:#a09890;
+  --accent:#2d5a27;--accent-light:#e8f0e6;--accent-hover:#234a1f;
+  --urgent:#c23616;--urgent-bg:#fdf0ed;--important:#d4820a;--important-bg:#fef8ec;--normal:#5a7d9a;--normal-bg:#eef4f8;
+  --st-ns:#94a3b8;--st-ns-bg:#f1f5f9;--st-ip:#d97706;--st-ip-bg:#fffbeb;--st-done:#16a34a;--st-done-bg:#f0fdf4;--st-block:#dc2626;--st-block-bg:#fef2f2;
+  --r:10px;--rl:14px;
+}
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans TC','Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;-webkit-font-smoothing:antialiased}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fu{animation:fadeUp .3s ease-out both}
+button{cursor:pointer;border:none;font-family:inherit}
+input,select,textarea{font-family:inherit}
+
+/* Topbar */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:14px 20px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50}
+.topbar-left{display:flex;align-items:center;gap:12px}
+.topbar-logo{width:36px;height:36px;border-radius:10px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:16px;font-weight:700}
+.topbar-title{font-family:'Space Grotesk','Noto Sans TC',sans-serif;font-size:17px;font-weight:700}
+.admin-badge{font-size:10px;background:var(--accent);color:#fff;padding:2px 7px;border-radius:5px;margin-left:6px;vertical-align:middle;font-weight:600}
+.topbar-actions{display:flex;gap:6px}
+.topbar-btn{background:var(--bg);border:1px solid var(--border);border-radius:8px;padding:7px 14px;font-size:12px;font-weight:500;color:var(--text2);display:flex;align-items:center;gap:5px;transition:all .15s}
+.topbar-btn:hover{border-color:var(--text3);color:var(--text)}
+.topbar-btn.primary{background:var(--accent);color:#fff;border-color:var(--accent)}
+.topbar-btn.primary:hover{background:var(--accent-hover)}
+
+/* Container */
+.container{max-width:700px;margin:0 auto;padding:20px 16px 80px}
+
+/* Tabs */
+.tab-row{display:flex;gap:4px;margin-bottom:18px;background:#ede9e4;border-radius:10px;padding:3px}
+.tab-btn{flex:1;padding:10px;border-radius:8px;font-size:13px;font-weight:500;background:transparent;color:var(--text2);text-align:center;transition:all .15s}
+.tab-btn.active{background:#fff;color:var(--text);box-shadow:0 1px 4px rgba(0,0,0,.06);font-weight:600}
+
+/* Filter */
+.filter-row{display:flex;gap:6px;margin-bottom:12px;flex-wrap:wrap}
+.chip{padding:5px 12px;border-radius:20px;font-size:12px;font-weight:500;background:var(--surface);color:var(--text2);border:1.5px solid var(--border);transition:all .15s}
+.chip:hover{border-color:var(--text3)}
+.chip.on{background:var(--text);color:#fff;border-color:var(--text)}
+
+/* Alert */
+.alert-bar{background:var(--urgent-bg);border:1px solid #fecaca;border-radius:var(--r);padding:10px 16px;margin-bottom:14px;font-size:13px;color:var(--urgent)}
+
+/* Form card */
+.form-card{background:var(--surface);border-radius:var(--rl);padding:20px;margin-bottom:16px;border:1px solid var(--border);display:flex;flex-direction:column;gap:12px}
+.form-title{font-size:14px;font-weight:600}
+.input{padding:11px 14px;border-radius:var(--r);border:1.5px solid var(--border);font-size:14px;outline:none;background:var(--bg);width:100%}
+.input:focus{border-color:var(--accent);background:var(--surface)}
+.input-sm{padding:8px 10px;border-radius:8px;border:1.5px solid var(--border);font-size:13px;outline:none;background:var(--bg);width:100%}
+.input-sm:focus{border-color:var(--accent);background:var(--surface)}
+.form-label{font-size:11px;color:var(--text3);font-weight:500;margin-bottom:3px;display:block}
+.form-row{display:flex;gap:8px;justify-content:flex-end}
+.btn-cancel{padding:8px 18px;border-radius:var(--r);background:var(--bg);color:var(--text2);font-size:13px;font-weight:500}
+.btn-cancel:hover{background:var(--border)}
+.btn-ok{padding:8px 18px;border-radius:var(--r);background:var(--accent);color:#fff;font-size:13px;font-weight:500}
+.btn-ok:hover{background:var(--accent-hover)}
+.field-row{display:flex;gap:10px}
+.field-col{flex:1;display:flex;flex-direction:column;gap:4px}
+.status-picker{display:flex;gap:6px;flex-wrap:wrap}
+.status-opt{padding:5px 11px;border-radius:8px;font-size:12px;background:var(--bg);color:var(--text2);border:1.5px solid var(--border);transition:all .15s}
+.status-opt.active{font-weight:600}
+
+/* New project button */
+.new-proj-btn{width:100%;padding:14px;border-radius:var(--rl);background:var(--surface);border:2px dashed #d1cdc6;color:var(--text2);font-size:14px;font-weight:500;margin-bottom:16px;display:flex;align-items:center;justify-content:center;gap:6px}
+.new-proj-btn:hover{border-color:var(--text3);color:var(--text)}
+
+/* Project card */
+.proj-card{background:var(--surface);border:1px solid var(--border);border-radius:var(--rl);margin-bottom:16px;overflow:hidden;transition:box-shadow .2s}
+.proj-card:hover{box-shadow:0 4px 16px rgba(0,0,0,.05)}
+.proj-head{display:flex;justify-content:space-between;align-items:center;padding:14px 16px;gap:8px}
+.proj-toggle{display:flex;align-items:center;gap:8px;background:none;flex:1;text-align:left;cursor:pointer}
+.proj-arrow{font-size:11px;color:var(--text3);transition:transform .2s}
+.proj-arrow.open{transform:rotate(90deg)}
+.proj-name{font-size:15px;font-weight:600}
+.pri-tag{font-size:11px;padding:2px 8px;border-radius:6px;font-weight:500}
+.pri-tag.urgent{background:var(--urgent-bg);color:var(--urgent)}
+.pri-tag.important{background:var(--important-bg);color:var(--important)}
+.pri-tag.normal{background:var(--normal-bg);color:var(--normal)}
+.proj-right{display:flex;align-items:center;gap:6px;flex-shrink:0}
+.meta-chip{font-size:11px;color:var(--text2);background:var(--bg);padding:2px 8px;border-radius:6px}
+.meta-warn{font-size:11px;color:var(--urgent);background:var(--urgent-bg);padding:2px 8px;border-radius:6px}
+.pri-select{font-size:11px;border:1px solid var(--border);border-radius:6px;padding:2px 4px;background:#fff;color:var(--text2);cursor:pointer}
+.tiny-btn{background:none;font-size:13px;padding:3px 6px;border-radius:6px;color:var(--text3)}
+.tiny-btn:hover{background:var(--border-light)}
+.danger-sm{background:var(--urgent-bg);font-size:11px;padding:3px 8px;border-radius:6px;color:var(--urgent);font-weight:500}
+
+/* Progress bar */
+.prog-wrap{display:flex;align-items:center;gap:10px;padding:0 16px 12px}
+.prog-track{flex:1;height:6px;background:var(--border-light);border-radius:4px;overflow:hidden}
+.prog-fill{height:100%;border-radius:4px;background:linear-gradient(90deg,var(--accent),#3a7432);transition:width .4s ease}
+.prog-pct{font-size:12px;font-weight:600;color:var(--accent);min-width:36px;text-align:right}
+
+/* Task */
+.task-list{padding:0 12px 12px}
+.task-card{background:var(--bg);border-radius:var(--r);padding:12px 14px;margin-bottom:6px;border-left:3px solid var(--border);display:flex;flex-direction:column;gap:10px;transition:all .2s}
+.task-card:hover{box-shadow:0 2px 10px rgba(0,0,0,.04);transform:translateY(-1px)}
+.task-text{font-size:14px;font-weight:500;line-height:1.5;flex:1}
+.task-desc{font-size:12px;color:var(--text2);margin-top:4px;line-height:1.6;background:var(--surface);padding:8px 10px;border-radius:6px;border:1px solid var(--border-light)}
+.task-meta{display:flex;gap:8px;margin-top:6px;flex-wrap:wrap;align-items:center}
+.assignee-tag{font-size:12px;color:var(--accent);background:var(--accent-light);padding:2px 8px;border-radius:6px}
+.due-tag{font-size:12px;padding:2px 8px;border-radius:6px}
+.weekly-note{margin-top:6px}
+.weekly-note-label{font-size:11px;color:var(--text3)}
+.weekly-note-box{font-size:12px;color:var(--text2);background:var(--surface);padding:6px 10px;border-radius:6px;border:1px solid var(--border-light);margin-top:2px;line-height:1.5}
+.status-badge{padding:3px 10px;border-radius:16px;font-size:12px;font-weight:500;display:inline-flex;align-items:center;gap:4px;cursor:pointer;transition:all .15s}
+.status-badge:hover{filter:brightness(.95)}
+.bar-track{flex:1;height:5px;background:var(--border-light);border-radius:4px;overflow:hidden}
+.bar-fill{height:100%;border-radius:4px;transition:width .4s ease}
+
+/* Add task */
+.add-task-btn{width:100%;padding:10px;border-radius:8px;background:transparent;border:1.5px dashed var(--border);color:var(--text3);font-size:13px;margin-top:4px;transition:all .2s}
+.add-task-btn:hover{border-color:var(--text3);color:var(--text2)}
+.add-task-form{background:var(--surface);border-radius:var(--r);padding:14px;margin-top:6px;border:1.5px solid var(--border);display:flex;flex-direction:column;gap:10px}
+
+/* Member */
+.member-form{display:flex;gap:8px;margin-bottom:16px}
+.member-card{display:flex;align-items:center;gap:12px;background:var(--surface);border:1px solid var(--border);border-radius:12px;padding:12px 16px;margin-bottom:6px}
+.member-avatar{width:32px;height:32px;border-radius:50%;background:var(--accent-light);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:14px;font-weight:600;flex-shrink:0}
+
+/* Export modal */
+.modal-overlay{position:fixed;inset:0;background:rgba(26,24,22,.4);backdrop-filter:blur(6px);z-index:100;display:flex;align-items:center;justify-content:center}
+.modal-card{background:var(--surface);border-radius:20px;padding:28px;max-width:500px;width:90%;max-height:80vh;overflow-y:auto;box-shadow:0 20px 60px rgba(0,0,0,.15)}
+.modal-title{font-size:18px;font-weight:700;margin-bottom:6px}
+.modal-sub{font-size:13px;color:var(--text2);margin-bottom:16px}
+.export-preview{background:var(--bg);border:1px solid var(--border);border-radius:var(--r);padding:14px;font-size:12px;line-height:1.7;white-space:pre-wrap;max-height:300px;overflow-y:auto;color:var(--text2);font-family:'Noto Sans TC',monospace}
+.modal-actions{display:flex;gap:8px;margin-top:16px;justify-content:flex-end;flex-wrap:wrap}
+
+/* Empty */
+.empty{text-align:center;padding:48px 20px}
+.empty-icon{font-size:40px;margin-bottom:12px}
+.empty-text{font-size:14px;color:var(--text3)}
+
+/* Toast */
+.toast{position:fixed;bottom:24px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:10px 20px;border-radius:10px;font-size:13px;font-weight:500;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.15);opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+
+/* Loading */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;gap:12px}
+.spinner{width:28px;height:28px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+
+@media(max-width:480px){.field-row{flex-direction:column;gap:8px}.topbar{padding:12px 14px}.topbar-actions{gap:4px}.modal-card{padding:20px}}
+</style>
+</head>
+<body>
+
+<div id="app"><div class="loading"><div class="spinner"></div><p style="color:var(--text3);font-size:13px">連線 Firebase 中...</p></div></div>
+<div class="toast" id="toast"></div>
+
+<script type="module">
+import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
+import { getFirestore, collection, doc, getDocs, addDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+
+const app = initializeApp({
+  apiKey:"AIzaSyA31PYM4v853tOEqi7xqwyGigEncDx64mM",authDomain:"weekreport-a9e81.firebaseapp.com",
+  projectId:"weekreport-a9e81",storageBucket:"weekreport-a9e81.firebasestorage.app",
+  messagingSenderId:"962006056350",appId:"1:962006056350:web:d556a7f6ca34376f27aa8f"
+});
+const db = getFirestore(app);
+
+/* ═══ STATE ═══ */
+let projects=[], members=[], tab="projects", expanded={}, statusFilter="all", priorityFilter="all";
+let showNewProj=false, newProjName="", newProjPriority="normal";
+let addingTaskTo=null, newTask={text:"",description:"",assignee:"",due:"",status:"not_started"};
+let editingTask=null, editData={};
+let newMemberName="", delConfirm=null, showExport=false;
+
+const STATUS=[
+  {value:"not_started",label:"尚未開始",icon:"○",color:"var(--st-ns)",bg:"var(--st-ns-bg)",rawColor:"#94a3b8",pct:0},
+  {value:"in_progress",label:"進行中",icon:"◐",color:"var(--st-ip)",bg:"var(--st-ip-bg)",rawColor:"#d97706",pct:50},
+  {value:"done",label:"已完成",icon:"●",color:"var(--st-done)",bg:"var(--st-done-bg)",rawColor:"#16a34a",pct:100},
+  {value:"blocked",label:"卡關",icon:"✕",color:"var(--st-block)",bg:"var(--st-block-bg)",rawColor:"#dc2626",pct:25},
+];
+const PRIS=[
+  {value:"urgent",label:"🔴 緊急",css:"urgent"},{value:"important",label:"🟡 重要",css:"important"},{value:"normal",label:"🔵 一般",css:"normal"}
+];
+const gs=v=>STATUS.find(s=>s.value===v)||STATUS[0];
+const gp=v=>PRIS.find(p=>p.value===v)||PRIS[2];
+
+function dueInfo(d,st){
+  if(st==="done")return d?{label:"✓ 已完成",cls:"done"}:null;
+  if(!d)return{label:"未設定",cls:"normal"};
+  const today=new Date();today.setHours(0,0,0,0);
+  const dd=new Date(d+"T00:00:00"),diff=Math.ceil((dd-today)/864e5);
+  if(diff<0)return{label:`逾期 ${-diff} 天`,cls:"overdue"};
+  if(diff===0)return{label:"今天到期",cls:"overdue"};
+  if(diff<=3)return{label:`${diff} 天後到期`,cls:"soon"};
+  return{label:`${diff} 天後`,cls:"normal"};
+}
+function dueStyle(cls){
+  if(cls==="overdue")return"color:var(--urgent);background:var(--urgent-bg);font-weight:600";
+  if(cls==="soon")return"color:var(--important);background:var(--important-bg);font-weight:500";
+  if(cls==="done")return"color:var(--st-done);background:var(--st-done-bg)";
+  return"color:var(--text3);background:var(--bg)";
+}
+function projProgress(tasks){return tasks.length?Math.round(tasks.reduce((s,t)=>s+gs(t.status).pct,0)/tasks.length):0}
+function esc(s){if(!s)return"";const d=document.createElement("div");d.textContent=s;return d.innerHTML}
+function toast(m){const e=document.getElementById("toast");e.textContent=m;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),2000)}
+
+/* ═══ FIREBASE LISTENERS ═══ */
+onSnapshot(collection(db,"members"),snap=>{
+  members=snap.docs.map(d=>({id:d.id,...d.data()}));
+  members.sort((a,b)=>(a.name||"").localeCompare(b.name||""));
+  render();
+});
+onSnapshot(query(collection(db,"projects"),orderBy("createdAt","desc")),snap=>{
+  projects=snap.docs.map(d=>({id:d.id,...d.data(),tasks:[]}));
+  projects.forEach(p=>{
+    if(expanded[p.id]===undefined)expanded[p.id]=true;
+    onSnapshot(query(collection(db,"projects",p.id,"tasks"),orderBy("createdAt","asc")),ts=>{
+      p.tasks=ts.docs.map(td=>({id:td.id,...td.data()}));
+      render();
+    });
+  });
+  render();
+});
+setTimeout(()=>render(),2000);
+
+/* ═══ OPERATIONS ═══ */
+async function opAddProject(){
+  if(!newProjName.trim())return;
+  await addDoc(collection(db,"projects"),{name:newProjName.trim(),priority:newProjPriority,createdAt:serverTimestamp()});
+  newProjName="";showNewProj=false;toast("已建立專案");
+}
+async function opDeleteProject(pid){
+  const ts=await getDocs(collection(db,"projects",pid,"tasks"));
+  for(const t of ts.docs)await deleteDoc(doc(db,"projects",pid,"tasks",t.id));
+  await deleteDoc(doc(db,"projects",pid));delConfirm=null;toast("已刪除專案");render();
+}
+async function opUpdatePriority(pid,pri){await updateDoc(doc(db,"projects",pid),{priority:pri})}
+async function opAddTask(pid){
+  if(!newTask.text.trim())return toast("請輸入名稱");
+  await addDoc(collection(db,"projects",pid,"tasks"),{
+    text:newTask.text.trim(),description:newTask.description.trim(),assignee:newTask.assignee,
+    due:newTask.due,status:newTask.status,weeklyNote:"",
+    statusHistory:[{from:null,to:newTask.status,at:new Date().toISOString(),by:"管理員"}],
+    createdAt:serverTimestamp(),updatedAt:serverTimestamp()
+  });
+  newTask={text:"",description:"",assignee:"",due:"",status:"not_started"};toast("已新增");
+}
+async function opUpdateTask(pid,tid,updates,oldTask){
+  if(updates.status&&updates.status!==oldTask.status){
+    const h=[...(oldTask.statusHistory||[]),{from:oldTask.status,to:updates.status,at:new Date().toISOString(),by:"管理員"}];
+    updates.statusHistory=h;
+  }
+  updates.updatedAt=serverTimestamp();
+  await updateDoc(doc(db,"projects",pid,"tasks",tid),updates);editingTask=null;toast("已更新");render();
+}
+async function opDeleteTask(pid,tid){
+  await deleteDoc(doc(db,"projects",pid,"tasks",tid));delConfirm=null;toast("已刪除");
+}
+async function opCycleStatus(pid,task){
+  const order=["not_started","in_progress","done","blocked"];
+  const ns=order[(order.indexOf(task.status)+1)%4];
+  const h=[...(task.statusHistory||[]),{from:task.status,to:ns,at:new Date().toISOString(),by:"管理員"}];
+  await updateDoc(doc(db,"projects",pid,"tasks",task.id),{status:ns,statusHistory:h,updatedAt:serverTimestamp()});
+}
+async function opAddMember(){
+  if(!newMemberName.trim())return;
+  await addDoc(collection(db,"members"),{name:newMemberName.trim(),createdAt:serverTimestamp()});
+  newMemberName="";toast("已新增組員");
+}
+async function opDeleteMember(mid){
+  await deleteDoc(doc(db,"members",mid));delConfirm=null;toast("已移除");render();
+}
+
+/* ═══ EXPORT ═══ */
+function generateExportText(){
+  const lines=[`📊 專案追蹤資料匯出`,`日期：${new Date().toISOString().slice(0,10)}`,``,`══════════════════════════`];
+  projects.forEach(p=>{
+    const prog=projProgress(p.tasks);
+    const pri=gp(p.priority);
+    lines.push(``,`【專案】${p.name}（${pri.label}）`,`進度：${prog}% — ${p.tasks.filter(t=>t.status==="done").length}/${p.tasks.length} 完成`,`──────────────────────────`);
+    p.tasks.forEach(t=>{
+      const s=gs(t.status);
+      const di=dueInfo(t.due,t.status);
+      lines.push(`  ${s.icon} ${t.text}`);
+      if(t.description)lines.push(`    描述：${t.description}`);
+      lines.push(`    狀態：${s.label} | 負責人：${t.assignee||"未指派"} | 預計完成：${t.due||"未設定"}${di&&di.cls==="overdue"?" ⚠️"+di.label:""}`);
+      if(t.weeklyNote)lines.push(`    📝 本週備註：${t.weeklyNote}`);
+      const hist=Array.isArray(t.statusHistory)?t.statusHistory:[];
+      if(hist.length>1){
+        const recent=hist.slice(-3).map(h=>`${(h.at||"").slice(0,10)} ${h.from||"新建"}→${gs(h.to).label}`).join("; ");
+        lines.push(`    變更紀錄：${recent}`);
+      }
+    });
+  });
+  lines.push(``,`══════════════════════════`,`共 ${projects.length} 個專案，${projects.flatMap(p=>p.tasks).length} 個工作項目`);
+  return lines.join("\n");
+}
+
+/* ═══ RENDER ═══ */
+function render(){
+  const el=document.getElementById("app");
+  const allTasks=projects.flatMap(p=>p.tasks);
+  const counts=STATUS.map(s=>({...s,count:allTasks.filter(t=>t.status===s.value).length}));
+  const overdueCount=allTasks.filter(t=>t.status!=="done"&&t.due&&dueInfo(t.due,t.status)?.cls==="overdue").length;
+  let fp=projects;
+  if(priorityFilter!=="all")fp=fp.filter(p=>p.priority===priorityFilter);
+  fp=fp.map(p=>({...p,tasks:statusFilter==="all"?p.tasks:p.tasks.filter(t=>t.status===statusFilter)})).filter(p=>statusFilter==="all"||p.tasks.length>0);
+
+  let h=`
+  <div class="topbar">
+    <div class="topbar-left">
+      <div class="topbar-logo">◈</div>
+      <span class="topbar-title">專案追蹤器<span class="admin-badge">管理版</span></span>
+    </div>
+    <div class="topbar-actions">
+      <button class="topbar-btn primary" onclick="openExport()">📤 匯出資料</button>
+    </div>
+  </div>
+  <div class="container">
+    <div class="tab-row">
+      <button class="tab-btn ${tab==="projects"?"active":""}" onclick="setTab('projects')">📋 專案管理</button>
+      <button class="tab-btn ${tab==="members"?"active":""}" onclick="setTab('members')">👥 組員管理 (${members.length})</button>
+    </div>`;
+
+  /* ── MEMBERS ── */
+  if(tab==="members"){
+    h+=`<div class="fu">
+      <div class="member-form">
+        <input class="input" style="flex:1" placeholder="輸入組員姓名" id="memberInput" value="${esc(newMemberName)}"
+          onkeydown="if(event.key==='Enter')addMember()">
+        <button class="btn-ok" onclick="addMember()">新增</button>
+      </div>`;
+    if(!members.length)h+=`<div class="empty"><div class="empty-icon">👥</div><p class="empty-text">還沒有組員</p></div>`;
+    members.forEach(m=>{
+      h+=`<div class="member-card fu">
+        <div class="member-avatar">${(m.name||"?").charAt(0)}</div>
+        <span style="flex:1;font-size:14px;font-weight:500">${esc(m.name)}</span>
+        ${delConfirm===`m-${m.id}`
+          ?`<button class="danger-sm" onclick="deleteMember('${m.id}')">確認</button><button class="tiny-btn" onclick="cancelDel()">取消</button>`
+          :`<button class="tiny-btn" onclick="confirmDel('m-${m.id}')">🗑</button>`}
+      </div>`;
+    });
+    h+=`</div>`;
+  }
+
+  /* ── PROJECTS ── */
+  if(tab==="projects"){
+    h+=`<div class="fu">`;
+    // Overdue
+    if(overdueCount>0)h+=`<div class="alert-bar fu">⚠️ 有 <strong>${overdueCount}</strong> 個工作項目已逾期</div>`;
+    // Priority filter
+    h+=`<div class="filter-row">
+      <button class="chip ${priorityFilter==="all"?"on":""}" onclick="setPriFilter('all')">全部專案</button>
+      ${PRIS.map(p=>`<button class="chip ${priorityFilter===p.value?"on":""}" style="${priorityFilter===p.value?`background:${p.css==="urgent"?"var(--urgent)":p.css==="important"?"var(--important)":"var(--normal)"};color:#fff;border-color:${p.css==="urgent"?"var(--urgent)":p.css==="important"?"var(--important)":"var(--normal)"}`:""}" onclick="setPriFilter('${p.value}')">${p.label}</button>`).join("")}
+    </div>`;
+    // Status filter
+    h+=`<div class="filter-row">
+      <button class="chip ${statusFilter==="all"?"on":""}" onclick="setStFilter('all')">全部 ${allTasks.length}</button>
+      ${counts.map(s=>`<button class="chip ${statusFilter===s.value?"on":""}" style="${statusFilter===s.value?`background:${s.rawColor};color:#fff;border-color:${s.rawColor}`:`color:${s.rawColor};border-color:${s.rawColor}33`}" onclick="setStFilter('${s.value}')">${s.icon} ${s.label} ${s.count}</button>`).join("")}
+    </div>`;
+
+    // New project
+    if(!showNewProj){
+      h+=`<button class="new-proj-btn" onclick="showNewProjForm()"><span style="font-size:20px;font-weight:300">+</span> 建立新專案</button>`;
+    }else{
+      h+=`<div class="form-card fu">
+        <div class="form-title">建立新專案</div>
+        <input class="input" placeholder="專案名稱" id="newProjInput" value="${esc(newProjName)}">
+        <div class="form-label">重要性</div>
+        <div class="status-picker">
+          ${PRIS.map(p=>`<button class="status-opt ${newProjPriority===p.value?"active":""}" style="${newProjPriority===p.value?`background:${p.css==="urgent"?"var(--urgent-bg)":p.css==="important"?"var(--important-bg)":"var(--normal-bg)"};color:${p.css==="urgent"?"var(--urgent)":p.css==="important"?"var(--important)":"var(--normal)"};border-color:${p.css==="urgent"?"var(--urgent)":p.css==="important"?"var(--important)":"var(--normal)"}`:""}" onclick="setNewProjPri('${p.value}')">${p.label}</button>`).join("")}
+        </div>
+        <div class="form-row">
+          <button class="btn-cancel" onclick="hideNewProj()">取消</button>
+          <button class="btn-ok" onclick="addProject()">建立</button>
+        </div>
+      </div>`;
+    }
+
+    // Empty
+    if(!fp.length)h+=`<div class="empty fu"><div class="empty-icon">📂</div><p class="empty-text">沒有項目</p></div>`;
+
+    // Project cards
+    fp.forEach(proj=>{
+      const prog=projProgress(proj.tasks);
+      const done=proj.tasks.filter(t=>t.status==="done").length;
+      const blocked=proj.tasks.filter(t=>t.status==="blocked").length;
+      const pri=gp(proj.priority);
+      const isOpen=expanded[proj.id]!==false;
+
+      h+=`<div class="proj-card fu">
+        <div class="proj-head">
+          <button class="proj-toggle" onclick="toggleProj('${proj.id}')">
+            <span class="proj-arrow ${isOpen?"open":""}">▶</span>
+            <span class="proj-name">${esc(proj.name)}</span>
+            <span class="pri-tag ${pri.css}">${pri.label}</span>
+          </button>
+          <div class="proj-right">
+            ${proj.tasks.length?`<span class="meta-chip">${done}/${proj.tasks.length}</span>`:""}
+            ${blocked>0?`<span class="meta-warn">✕${blocked}</span>`:""}
+            <select class="pri-select" onchange="changePri('${proj.id}',this.value)">
+              ${PRIS.map(p=>`<option value="${p.value}" ${proj.priority===p.value?"selected":""}>${p.label}</option>`).join("")}
+            </select>
+            ${delConfirm===`p-${proj.id}`
+              ?`<button class="danger-sm" onclick="deleteProject('${proj.id}')">刪除</button><button class="tiny-btn" onclick="cancelDel()">取消</button>`
+              :`<button class="tiny-btn" onclick="confirmDel('p-${proj.id}')">🗑</button>`}
+          </div>
+        </div>`;
+
+      if(proj.tasks.length>0)h+=`<div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:${prog}%"></div></div><span class="prog-pct">${prog}%</span></div>`;
+
+      if(isOpen){
+        h+=`<div class="task-list">`;
+        proj.tasks.forEach((task,idx)=>{
+          const s=gs(task.status);
+          const di=dueInfo(task.due,task.status);
+          const isEdit=editingTask&&editingTask.pid===proj.id&&editingTask.tid===task.id;
+
+          h+=`<div class="task-card" style="border-left-color:${s.rawColor}">`;
+          if(isEdit){
+            h+=`<div style="display:flex;flex-direction:column;gap:10px">
+              <input class="input" id="editText" value="${esc(editData.text)}">
+              <textarea class="input" style="min-height:50px;resize:vertical" id="editDesc" placeholder="描述">${esc(editData.description)}</textarea>
+              <div class="field-row">
+                <div class="field-col"><label class="form-label">負責人</label>
+                  <select class="input-sm" id="editAssignee"><option value="">未指派</option>${members.map(m=>`<option value="${esc(m.name)}" ${editData.assignee===m.name?"selected":""}>${esc(m.name)}</option>`).join("")}</select>
+                </div>
+                <div class="field-col"><label class="form-label">預計完成</label>
+                  <input type="date" class="input-sm" id="editDue" value="${editData.due||""}">
+                </div>
+              </div>
+              <div class="status-picker">${STATUS.map(o=>`<button class="status-opt ${editData.status===o.value?"active":""}" style="${editData.status===o.value?`background:${o.bg};color:${o.rawColor};border-color:${o.rawColor}`:""}" onclick="setEditSt('${o.value}')">${o.icon} ${o.label}</button>`).join("")}</div>
+              <div class="form-row">
+                <button class="btn-cancel" onclick="cancelEdit()">取消</button>
+                <button class="btn-ok" onclick="saveEdit('${proj.id}','${task.id}')">儲存</button>
+              </div>
+            </div>`;
+          }else{
+            h+=`<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:8px">
+              <div style="flex:1">
+                <span class="task-text">${esc(task.text)}</span>
+                ${task.description?`<div class="task-desc">${esc(task.description)}</div>`:""}
+                <div class="task-meta">
+                  ${task.assignee?`<span class="assignee-tag">👤 ${esc(task.assignee)}</span>`:""}
+                  ${di?`<span class="due-tag" style="${dueStyle(di.cls)}">📅 ${di.label}</span>`:""}
+                </div>
+                ${task.weeklyNote?`<div class="weekly-note"><span class="weekly-note-label">📝 本週備註</span><div class="weekly-note-box">${esc(task.weeklyNote)}</div></div>`:""}
+              </div>
+              <div style="display:flex;gap:2px;flex-shrink:0">
+                <button class="tiny-btn" onclick="startEdit('${proj.id}','${task.id}')">✏️</button>
+                ${delConfirm===task.id
+                  ?`<button class="danger-sm" onclick="delTask('${proj.id}','${task.id}')">刪除</button><button class="tiny-btn" onclick="cancelDel()">取消</button>`
+                  :`<button class="tiny-btn" onclick="confirmDel('${task.id}')">🗑</button>`}
+              </div>
+            </div>
+            <div style="display:flex;align-items:center;gap:10px">
+              <button class="status-badge" style="background:${s.bg};color:${s.rawColor};border:1.5px solid ${s.rawColor}30" onclick="cycleSt('${proj.id}','${task.id}')"><span style="font-size:10px">${s.icon}</span>${s.label}</button>
+              <div class="bar-track"><div class="bar-fill" style="width:${s.pct}%;background:${s.rawColor}"></div></div>
+              <span style="font-size:12px;font-weight:600;color:${s.rawColor};min-width:30px;text-align:right">${s.pct}%</span>
+            </div>`;
+          }
+          h+=`</div>`;
+        });
+
+        // Add task
+        if(addingTaskTo===proj.id){
+          h+=`<div class="add-task-form fu">
+            <input class="input" placeholder="工作項目名稱" id="newTaskText" value="${esc(newTask.text)}">
+            <textarea class="input" style="min-height:50px;resize:vertical" placeholder="描述說明（選填）" id="newTaskDesc">${esc(newTask.description)}</textarea>
+            <div class="field-row">
+              <div class="field-col"><label class="form-label">負責人</label>
+                <select class="input-sm" id="newTaskAssignee"><option value="">未指派</option>${members.map(m=>`<option value="${esc(m.name)}" ${newTask.assignee===m.name?"selected":""}>${esc(m.name)}</option>`).join("")}</select>
+              </div>
+              <div class="field-col"><label class="form-label">預計完成</label>
+                <input type="date" class="input-sm" id="newTaskDue" value="${newTask.due}">
+              </div>
+            </div>
+            <div class="status-picker">${STATUS.map(o=>`<button class="status-opt ${newTask.status===o.value?"active":""}" style="${newTask.status===o.value?`background:${o.bg};color:${o.rawColor};border-color:${o.rawColor}`:""}" onclick="setNewTaskSt('${o.value}')">${o.icon} ${o.label}</button>`).join("")}</div>
+            <div class="form-row">
+              <button class="btn-cancel" onclick="cancelAddTask()">完成</button>
+              <button class="btn-ok" onclick="doAddTask('${proj.id}')">新增</button>
+            </div>
+            <p style="font-size:12px;color:var(--text3);text-align:center">💡 可連續新增，按「完成」關閉</p>
+          </div>`;
+        }else{
+          h+=`<button class="add-task-btn" onclick="startAddTask('${proj.id}')">+ 新增工作項目</button>`;
+        }
+        h+=`</div>`;
+      }
+      h+=`</div>`;
+    });
+    h+=`</div>`;
+  }
+
+  h+=`</div>`;
+
+  // Export modal
+  if(showExport){
+    const txt=generateExportText();
+    h+=`<div class="modal-overlay" onclick="if(event.target===this)closeExport()">
+      <div class="modal-card">
+        <div class="modal-title">📤 匯出資料</div>
+        <div class="modal-sub">複製以下內容，貼到 Claude 對話中產生 AI 摘要或週報</div>
+        <div class="export-preview" id="exportText">${esc(txt)}</div>
+        <div class="modal-actions">
+          <button class="btn-cancel" onclick="closeExport()">關閉</button>
+          <button class="btn-ok" onclick="copyExport()">📋 複製到剪貼簿</button>
+        </div>
+      </div>
+    </div>`;
+  }
+
+  el.innerHTML=h;
+}
+
+/* ═══ GLOBAL HANDLERS ═══ */
+window.setTab=v=>{tab=v;render()};
+window.setStFilter=v=>{statusFilter=statusFilter===v?"all":v;render()};
+window.setPriFilter=v=>{priorityFilter=priorityFilter===v?"all":v;render()};
+window.toggleProj=id=>{expanded[id]=expanded[id]===false;render()};
+window.confirmDel=id=>{delConfirm=id;render()};
+window.cancelDel=()=>{delConfirm=null;render()};
+
+window.showNewProjForm=()=>{showNewProj=true;render();setTimeout(()=>document.getElementById("newProjInput")?.focus(),50)};
+window.hideNewProj=()=>{showNewProj=false;newProjName="";render()};
+window.setNewProjPri=v=>{newProjPriority=v;render()};
+window.addProject=()=>{newProjName=document.getElementById("newProjInput")?.value||"";opAddProject()};
+window.deleteProject=pid=>opDeleteProject(pid);
+window.changePri=(pid,v)=>opUpdatePriority(pid,v);
+
+window.startAddTask=pid=>{addingTaskTo=pid;newTask={text:"",description:"",assignee:"",due:"",status:"not_started"};render();setTimeout(()=>document.getElementById("newTaskText")?.focus(),50)};
+window.cancelAddTask=()=>{addingTaskTo=null;render()};
+window.setNewTaskSt=v=>{newTask.status=v;render()};
+window.doAddTask=pid=>{
+  newTask.text=document.getElementById("newTaskText")?.value||"";
+  newTask.description=document.getElementById("newTaskDesc")?.value||"";
+  newTask.assignee=document.getElementById("newTaskAssignee")?.value||"";
+  newTask.due=document.getElementById("newTaskDue")?.value||"";
+  opAddTask(pid);
+};
+
+window.startEdit=(pid,tid)=>{
+  const task=projects.find(p=>p.id===pid)?.tasks?.find(t=>t.id===tid);
+  if(!task)return;
+  editingTask={pid,tid};editData={text:task.text,description:task.description||"",assignee:task.assignee||"",due:task.due||"",status:task.status};
+  render();
+};
+window.cancelEdit=()=>{editingTask=null;render()};
+window.setEditSt=v=>{editData.status=v;render()};
+window.saveEdit=(pid,tid)=>{
+  editData.text=document.getElementById("editText")?.value||editData.text;
+  editData.description=document.getElementById("editDesc")?.value||"";
+  editData.assignee=document.getElementById("editAssignee")?.value||"";
+  editData.due=document.getElementById("editDue")?.value||"";
+  const task=projects.find(p=>p.id===pid)?.tasks?.find(t=>t.id===tid);
+  opUpdateTask(pid,tid,{...editData},task);
+};
+window.delTask=(pid,tid)=>opDeleteTask(pid,tid);
+window.cycleSt=(pid,tid)=>{const task=projects.find(p=>p.id===pid)?.tasks?.find(t=>t.id===tid);if(task)opCycleStatus(pid,task)};
+
+window.addMember=()=>{newMemberName=document.getElementById("memberInput")?.value||"";opAddMember();render()};
+window.deleteMember=mid=>opDeleteMember(mid);
+
+window.openExport=()=>{showExport=true;render()};
+window.closeExport=()=>{showExport=false;render()};
+window.copyExport=()=>{
+  const txt=generateExportText();
+  navigator.clipboard.writeText(txt).then(()=>toast("已複製！貼到 Claude 對話即可產生週報"));
+};
+</script>
+</body>
+</html>

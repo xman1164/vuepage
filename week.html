@@ -356,7 +356,8 @@ function render() {
     appEl.innerHTML = renderIdentity();
     return;
   }
-  document.getElementById("loading").style.display = "none";
+  const loadingEl = document.getElementById("loading");
+  if (loadingEl) loadingEl.style.display = "none";
 
   const allTasks = projects.flatMap(p => p.tasks);
   const counts = STATUS.map(s => ({ ...s, count: allTasks.filter(t => t.status === s.value).length }));

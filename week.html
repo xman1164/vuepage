@@ -228,6 +228,7 @@ let deleteConfirm = null;
 let editingWeeklyNote = null;
 let statusFilter = "all";
 let priorityFilter = "all";
+let viewMode = "all"; // "all" or "mine"
 
 const STATUS = [
   { value: "not_started", label: "尚未開始", icon: "○", color: "var(--status-not-started)", bg: "var(--status-not-started-bg)", pct: 0 },
@@ -311,6 +312,15 @@ async function fbAddProject(name, priority) {
   } catch (e) { toast("建立失敗：" + e.message); }
 }
 
+async function fbDeleteProject(projId) {
+  try {
+    const taskSnap = await getDocs(collection(db, "projects", projId, "tasks"));
+    for (const t of taskSnap.docs) await deleteDoc(doc(db, "projects", projId, "tasks", t.id));
+    await deleteDoc(doc(db, "projects", projId));
+    toast("已刪除專案");
+  } catch (e) { toast("刪除失敗：" + e.message); }
+}
+
 async function fbAddTask(projId, task) {
   try {
     await addDoc(collection(db, "projects", projId, "tasks"), {
@@ -364,6 +374,13 @@ function render() {
   const overdueCount = allTasks.filter(t => t.status !== "done" && t.due && (dueInfo(t.due, t.status)?.cls === "overdue")).length;
 
   let filtered = projects;
+  // View mode filter: mine = only show tasks assigned to me (keep project if any task is mine)
+  if (viewMode === "mine") {
+    filtered = filtered.map(p => ({
+      ...p,
+      tasks: p.tasks.filter(t => t.assignee === currentUser),
+    })).filter(p => p.tasks.length > 0 || p.createdBy === currentUser);
+  }
   if (priorityFilter !== "all") {
     filtered = filtered.filter(p => p.priority === priorityFilter);
   }
@@ -391,6 +408,12 @@ function render() {
   if (overdueCount > 0) {
     html += `<div style="background:var(--urgent-bg);border:1px solid #fecaca;border-radius:var(--radius);padding:10px 16px;margin-bottom:16px;font-size:13px;color:var(--urgent);" class="fade-up">⚠️ 有 <strong>${overdueCount}</strong> 個工作項目已逾期</div>`;
   }
+
+  // View mode toggle
+  html += `<div style="display:flex;gap:4px;margin-bottom:12px;background:#ede9e4;border-radius:10px;padding:3px">
+    <button style="flex:1;padding:9px;border-radius:8px;font-size:13px;font-weight:${viewMode==='all'?'600':'500'};background:${viewMode==='all'?'#fff':'transparent'};color:${viewMode==='all'?'var(--text-primary)':'var(--text-secondary)'};border:none;cursor:pointer;text-align:center;font-family:inherit;${viewMode==='all'?'box-shadow:0 1px 4px rgba(0,0,0,.06)':''}" onclick="window.setViewMode('all')">👥 全部人</button>
+    <button style="flex:1;padding:9px;border-radius:8px;font-size:13px;font-weight:${viewMode==='mine'?'600':'500'};background:${viewMode==='mine'?'#fff':'transparent'};color:${viewMode==='mine'?'var(--text-primary)':'var(--text-secondary)'};border:none;cursor:pointer;text-align:center;font-family:inherit;${viewMode==='mine'?'box-shadow:0 1px 4px rgba(0,0,0,.06)':''}" onclick="window.setViewMode('mine')">👤 只看我的</button>
+  </div>`;
 
   // Priority filter
   html += `<div class="priority-bar">
@@ -436,8 +459,8 @@ function render() {
     const pri = gp(proj.priority);
 
     html += `<div class="project-card fade-up">`;
-    html += `<div class="project-header" onclick="toggleProject('${proj.id}')">
-      <div class="project-left">
+    html += `<div class="project-header">
+      <div class="project-left" onclick="toggleProject('${proj.id}')" style="cursor:pointer;flex:1;display:flex;align-items:center;gap:10px">
         <span class="project-arrow ${isOpen ? 'open' : ''}">▶</span>
         <span class="project-name">${esc(proj.name)}</span>
         <span class="priority-tag ${pri.css}">${pri.label}</span>
@@ -445,6 +468,11 @@ function render() {
       <div class="project-meta">
         ${proj.tasks.length ? `<span class="meta-badge">${done}/${proj.tasks.length}</span>` : ""}
         ${blocked > 0 ? `<span class="meta-badge warn">✕${blocked}</span>` : ""}
+        ${proj.createdBy === currentUser ? (
+          deleteConfirm === `proj-${proj.id}`
+            ? `<button style="background:var(--urgent-bg);font-size:11px;padding:3px 8px;border-radius:6px;color:var(--urgent);font-weight:500;border:none;cursor:pointer" onclick="event.stopPropagation();window.doDeleteProject('${proj.id}')">確認刪除</button><button style="background:none;font-size:13px;padding:3px 6px;border-radius:6px;color:var(--text-muted);border:none;cursor:pointer" onclick="event.stopPropagation();window.cancelDeleteConfirm()">取消</button>`
+            : `<button style="background:none;font-size:13px;padding:3px 6px;border-radius:6px;color:var(--text-muted);border:none;cursor:pointer" title="刪除專案" onclick="event.stopPropagation();window.confirmDeleteProject('${proj.id}')">🗑</button>`
+        ) : ""}
       </div>
     </div>`;
 
@@ -654,6 +682,7 @@ window.toggleProject = function(id) {
 
 window.setStatusFilter = function(v) { statusFilter = v; render(); };
 window.setPriorityFilter = function(v) { priorityFilter = v; render(); };
+window.setViewMode = function(v) { viewMode = v; render(); };
 
 window.startAddTask = function(projId) { addingTaskTo = projId; newTaskStatus = "not_started"; render(); };
 window.cancelAddTask = function() { addingTaskTo = null; render(); };
@@ -714,6 +743,10 @@ window.saveEdit = async function(projId, taskId, oldStatus) {
 window.confirmDelete = function(id) { deleteConfirm = id; render(); };
 window.cancelDelete = function() { deleteConfirm = null; render(); };
 window.doDeleteTask = async function(projId, taskId) { await fbDeleteTask(projId, taskId); deleteConfirm = null; };
+
+window.confirmDeleteProject = function(id) { deleteConfirm = `proj-${id}`; render(); };
+window.cancelDeleteConfirm = function() { deleteConfirm = null; render(); };
+window.doDeleteProject = async function(projId) { await fbDeleteProject(projId); deleteConfirm = null; };
 
 window.cycleStatus = async function(projId, taskId) {
   const proj = projects.find(p => p.id === projId);

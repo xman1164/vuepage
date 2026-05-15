@@ -352,7 +352,7 @@ function render(){
   }else{
     h+=`<div class="form-card fu">
       <div class="form-title">建立新專案</div>
-      <input class="input" id="newProjName" placeholder="專案名稱">
+      <input class="input" id="newProjName" placeholder="專案名稱" value="${esc(newProjectName)}">
       <div class="form-label">重要性</div>
       <div class="status-picker">${PRIS.map(p=>`<button class="status-opt ${newProjectPriority===p.v?'active':''}" style="${newProjectPriority===p.v?`background:${p.css==='urgent'?'var(--urgent-bg)':p.css==='important'?'var(--important-bg)':'var(--normal-bg)'};color:${p.css==='urgent'?'var(--urgent)':p.css==='important'?'var(--important)':'var(--normal)'};border-color:${p.css==='urgent'?'var(--urgent)':p.css==='important'?'var(--important)':'var(--normal)'}`:''}" onclick="window.setNewProjPri('${p.v}')">${p.l}</button>`).join("")}</div>
       <div class="form-row"><button class="btn-cancel" onclick="window.hideNewProj()">取消</button><button class="btn-ok" onclick="window.doAddProject()">建立</button></div>
@@ -513,25 +513,36 @@ window.confirmDel=id=>{deleteConfirm=id;render()};
 window.cancelDel=()=>{deleteConfirm=null;render()};
 
 // Project
+function syncNewProjInputs(){
+  const el=document.getElementById("newProjName");if(el)newProjectName=el.value;
+}
+function syncNewTaskInputs(){
+  const t=document.getElementById("newTaskText"),d=document.getElementById("newTaskDesc"),du=document.getElementById("newTaskDue");
+  if(t)newTask.text=t.value;if(d)newTask.description=d.value;if(du)newTask.due=du.value;
+}
+function syncEditInputs(){
+  const t=document.getElementById("editText"),d=document.getElementById("editDesc"),du=document.getElementById("editDue");
+  if(t)editData.text=t.value;if(d)editData.description=d.value;if(du)editData.due=du.value;
+}
+
 window.showNewProjForm=()=>{showNewProject=true;render();setTimeout(()=>document.getElementById("newProjName")?.focus(),50)};
 window.hideNewProj=()=>{showNewProject=false;render()};
-window.setNewProjPri=v=>{newProjectPriority=v;render()};
+window.setNewProjPri=v=>{syncNewProjInputs();newProjectPriority=v;render()};
 window.doAddProject=async()=>{const name=document.getElementById("newProjName")?.value?.trim();if(!name)return toast("請輸入名稱");await fbAddProject(name,newProjectPriority);showNewProject=false;newProjectPriority="normal"};
 window.doDelProj=async pid=>{await fbDeleteProject(pid);deleteConfirm=null};
 
 // Task
 window.startAddTask=pid=>{addingTaskTo=pid;newTask={text:"",description:"",assignees:[currentUser],due:"",status:"not_started"};render();setTimeout(()=>document.getElementById("newTaskText")?.focus(),50)};
 window.cancelAddTask=()=>{addingTaskTo=null;render()};
-window.setNewTaskSt=v=>{newTask.status=v;render()};
+window.setNewTaskSt=v=>{syncNewTaskInputs();newTask.status=v;render()};
 window.toggleNewAssignee=name=>{
+  syncNewTaskInputs();
   const a=newTask.assignees||[];
   newTask.assignees=a.includes(name)?a.filter(x=>x!==name):[...a,name];
   render();
 };
 window.doAddTask=async pid=>{
-  newTask.text=document.getElementById("newTaskText")?.value||"";
-  newTask.description=document.getElementById("newTaskDesc")?.value||"";
-  newTask.due=document.getElementById("newTaskDue")?.value||"";
+  syncNewTaskInputs();
   if(!newTask.text.trim())return toast("請輸入名稱");
   await fbAddTask(pid,{text:newTask.text.trim(),description:newTask.description.trim(),assignees:newTask.assignees,due:newTask.due,status:newTask.status});
   newTask={text:"",description:"",assignees:[currentUser],due:"",status:"not_started"};
@@ -546,16 +557,15 @@ window.startEdit=(pid,tid)=>{
   render();
 };
 window.cancelEdit=()=>{editingTask=null;render()};
-window.setEditSt=v=>{editData.status=v;render()};
+window.setEditSt=v=>{syncEditInputs();editData.status=v;render()};
 window.toggleEditAssignee=name=>{
+  syncEditInputs();
   const a=editData.assignees||[];
   editData.assignees=a.includes(name)?a.filter(x=>x!==name):[...a,name];
   render();
 };
 window.saveEdit=async(pid,tid)=>{
-  editData.text=document.getElementById("editText")?.value||editData.text;
-  editData.description=document.getElementById("editDesc")?.value||"";
-  editData.due=document.getElementById("editDue")?.value||"";
+  syncEditInputs();
   if(!editData.text.trim())return toast("名稱不能為空");
   const task=projects.find(p=>p.id===pid)?.tasks?.find(t=>t.id===tid);
   const updates={text:editData.text.trim(),description:editData.description,assignees:editData.assignees,due:editData.due,status:editData.status};

@@ -4,779 +4,577 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>專案追蹤器 — 組員版</title>
-<link rel="preconnect" href="https://fonts.googleapis.com">
 <link href="https://fonts.googleapis.com/css2?family=Noto+Sans+TC:wght@400;500;600;700&family=Space+Grotesk:wght@400;500;600;700&display=swap" rel="stylesheet">
 <style>
-:root {
-  --bg: #f5f3f0;
-  --surface: #ffffff;
-  --surface-hover: #fafaf8;
-  --border: #e8e5e0;
-  --border-light: #f0ede8;
-  --text-primary: #1a1816;
-  --text-secondary: #6b6560;
-  --text-muted: #a09890;
-  --accent: #2d5a27;
-  --accent-light: #e8f0e6;
-  --accent-hover: #234a1f;
-  --urgent: #c23616;
-  --urgent-bg: #fdf0ed;
-  --important: #d4820a;
-  --important-bg: #fef8ec;
-  --normal: #5a7d9a;
-  --normal-bg: #eef4f8;
-  --status-not-started: #a09890;
-  --status-not-started-bg: #f5f3f0;
-  --status-progress: #d4820a;
-  --status-progress-bg: #fef8ec;
-  --status-done: #2d5a27;
-  --status-done-bg: #e8f0e6;
-  --status-blocked: #c23616;
-  --status-blocked-bg: #fdf0ed;
-  --radius: 10px;
-  --radius-lg: 14px;
-  --shadow-sm: 0 1px 3px rgba(26,24,22,.04);
-  --shadow-md: 0 4px 16px rgba(26,24,22,.06);
-  --font-display: 'Space Grotesk', 'Noto Sans TC', sans-serif;
-  --font-body: 'Noto Sans TC', 'Space Grotesk', sans-serif;
+:root{
+  --bg:#f5f3f0;--surface:#fff;--border:#e8e5e0;--border-light:#f0ede8;
+  --text:#1a1816;--text2:#6b6560;--text3:#a09890;
+  --accent:#2d5a27;--accent-light:#e8f0e6;--accent-hover:#234a1f;
+  --urgent:#c23616;--urgent-bg:#fdf0ed;--important:#d4820a;--important-bg:#fef8ec;--normal:#5a7d9a;--normal-bg:#eef4f8;
+  --ns:#94a3b8;--ns-bg:#f1f5f9;--ip:#d97706;--ip-bg:#fffbeb;--done:#16a34a;--done-bg:#f0fdf4;--block:#dc2626;--block-bg:#fef2f2;
+  --r:12px;--rl:16px;
 }
-* { box-sizing: border-box; margin: 0; padding: 0; }
-body { font-family: var(--font-body); background: var(--bg); color: var(--text-primary); min-height: 100vh; -webkit-font-smoothing: antialiased; }
+*{box-sizing:border-box;margin:0;padding:0}
+body{font-family:'Noto Sans TC','Space Grotesk',sans-serif;background:var(--bg);color:var(--text);min-height:100vh;font-size:15px;-webkit-font-smoothing:antialiased}
+@keyframes fadeUp{from{opacity:0;transform:translateY(10px)}to{opacity:1;transform:translateY(0)}}
+@keyframes spin{to{transform:rotate(360deg)}}
+.fu{animation:fadeUp .3s ease-out both}
+button{cursor:pointer;border:none;font-family:inherit;font-size:14px}
+input,select,textarea{font-family:inherit;font-size:14px}
 
-/* ── Animations ── */
-@keyframes fadeUp { from { opacity: 0; transform: translateY(12px); } to { opacity: 1; transform: translateY(0); } }
-@keyframes slideDown { from { opacity: 0; max-height: 0; overflow: hidden; } to { opacity: 1; max-height: 800px; } }
-@keyframes pulse { 0%,100% { opacity: 1; } 50% { opacity: .5; } }
-@keyframes spin { to { transform: rotate(360deg); } }
-.fade-up { animation: fadeUp .35s ease-out both; }
-.slide-down { animation: slideDown .3s ease-out both; }
+/* Topbar */
+.topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50}
+.topbar-left{display:flex;align-items:center;gap:14px}
+.topbar-logo{width:40px;height:40px;border-radius:12px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700}
+.topbar-title{font-family:'Space Grotesk','Noto Sans TC',sans-serif;font-size:19px;font-weight:700}
+.topbar-user{display:flex;align-items:center;gap:10px}
+.topbar-avatar{width:34px;height:34px;border-radius:50%;background:var(--accent-light);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600}
+.topbar-name{font-size:14px;color:var(--text2);font-weight:500}
+.topbar-switch{background:none;border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:13px;color:var(--text3)}
+.topbar-switch:hover{border-color:var(--text3);color:var(--text2)}
+.container{max-width:740px;margin:0 auto;padding:24px 18px 100px}
 
-/* ── Identity Bar ── */
-.identity-overlay { position: fixed; inset: 0; background: rgba(26,24,22,.4); backdrop-filter: blur(8px); z-index: 100; display: flex; align-items: center; justify-content: center; }
-.identity-card { background: var(--surface); border-radius: 20px; padding: 40px; max-width: 380px; width: 90%; text-align: center; box-shadow: 0 20px 60px rgba(26,24,22,.15); }
-.identity-card h2 { font-family: var(--font-display); font-size: 22px; font-weight: 700; margin-bottom: 8px; }
-.identity-card p { color: var(--text-secondary); font-size: 13px; margin-bottom: 24px; }
-.identity-select { width: 100%; padding: 12px 16px; border: 1.5px solid var(--border); border-radius: var(--radius); font-size: 15px; font-family: var(--font-body); background: var(--bg); appearance: none; cursor: pointer; outline: none; }
-.identity-select:focus { border-color: var(--accent); }
-.identity-enter { width: 100%; margin-top: 14px; padding: 13px; border: none; border-radius: var(--radius); background: var(--accent); color: #fff; font-size: 15px; font-weight: 600; font-family: var(--font-body); cursor: pointer; transition: background .2s; }
-.identity-enter:hover { background: var(--accent-hover); }
-.identity-enter:disabled { opacity: .4; cursor: not-allowed; }
+/* Identity */
+.id-overlay{position:fixed;inset:0;background:rgba(26,24,22,.4);backdrop-filter:blur(8px);z-index:100;display:flex;align-items:center;justify-content:center}
+.id-card{background:var(--surface);border-radius:24px;padding:48px 36px;max-width:420px;width:92%;text-align:center;box-shadow:0 20px 60px rgba(26,24,22,.15)}
+.id-card h2{font-size:26px;font-weight:700;margin-bottom:10px}
+.id-card p{color:var(--text2);font-size:15px;margin-bottom:28px}
+.id-select{width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:var(--r);font-size:16px;background:var(--bg);appearance:none;cursor:pointer;outline:none}
+.id-select:focus{border-color:var(--accent)}
+.id-enter{width:100%;margin-top:16px;padding:16px;border-radius:var(--r);background:var(--accent);color:#fff;font-size:16px;font-weight:600;transition:background .2s}
+.id-enter:hover{background:var(--accent-hover)}
 
-/* ── Top Bar ── */
-.topbar { background: var(--surface); border-bottom: 1px solid var(--border); padding: 14px 20px; display: flex; justify-content: space-between; align-items: center; position: sticky; top: 0; z-index: 50; }
-.topbar-left { display: flex; align-items: center; gap: 12px; }
-.topbar-logo { width: 34px; height: 34px; border-radius: 9px; background: var(--accent); color: #fff; display: flex; align-items: center; justify-content: center; font-size: 15px; font-weight: 700; font-family: var(--font-display); }
-.topbar-title { font-family: var(--font-display); font-size: 16px; font-weight: 700; }
-.topbar-user { display: flex; align-items: center; gap: 8px; }
-.topbar-avatar { width: 28px; height: 28px; border-radius: 50%; background: var(--accent-light); color: var(--accent); display: flex; align-items: center; justify-content: center; font-size: 12px; font-weight: 600; }
-.topbar-name { font-size: 13px; color: var(--text-secondary); font-weight: 500; }
-.topbar-switch { background: none; border: 1px solid var(--border); border-radius: 6px; padding: 4px 10px; font-size: 11px; color: var(--text-muted); cursor: pointer; font-family: var(--font-body); }
-.topbar-switch:hover { border-color: var(--text-muted); color: var(--text-secondary); }
+/* Search */
+.search-bar{margin-bottom:16px}
+.search-input{width:100%;padding:13px 18px 13px 44px;border:2px solid var(--border);border-radius:var(--r);font-size:15px;outline:none;background:var(--surface);transition:border .2s}
+.search-input:focus{border-color:var(--accent)}
+.search-wrap{position:relative}
+.search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--text3);pointer-events:none}
 
-/* ── Container ── */
-.container { max-width: 680px; margin: 0 auto; padding: 20px 16px 80px; }
+/* View Toggle */
+.view-toggle{display:flex;gap:4px;margin-bottom:14px;background:#ede9e4;border-radius:12px;padding:4px}
+.view-btn{flex:1;padding:11px;border-radius:10px;font-size:14px;font-weight:500;background:transparent;color:var(--text2);text-align:center;transition:all .15s}
+.view-btn.on{background:#fff;color:var(--text);box-shadow:0 2px 6px rgba(0,0,0,.06);font-weight:600}
 
-/* ── Filter Bar ── */
-.filter-bar { display: flex; gap: 6px; margin-bottom: 20px; flex-wrap: wrap; }
-.filter-chip { padding: 6px 14px; border-radius: 20px; font-size: 12px; font-weight: 500; border: 1.5px solid var(--border); background: var(--surface); color: var(--text-secondary); cursor: pointer; transition: all .15s; font-family: var(--font-body); }
-.filter-chip:hover { border-color: var(--text-muted); }
-.filter-chip.active { background: var(--text-primary); color: #fff; border-color: var(--text-primary); }
+/* Filter */
+.filter-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
+.chip{padding:7px 16px;border-radius:22px;font-size:13px;font-weight:500;background:var(--surface);color:var(--text2);border:2px solid var(--border);transition:all .15s}
+.chip:hover{border-color:var(--text3)}
+.chip.on{background:var(--text);color:#fff;border-color:var(--text)}
 
-/* ── Priority Chips ── */
-.priority-bar { display: flex; gap: 6px; margin-bottom: 16px; flex-wrap: wrap; }
-.priority-chip { padding: 5px 12px; border-radius: 20px; font-size: 12px; font-weight: 500; border: 1.5px solid var(--border); background: var(--surface); cursor: pointer; transition: all .15s; font-family: var(--font-body); }
-.priority-chip.active-urgent { background: var(--urgent-bg); color: var(--urgent); border-color: var(--urgent); }
-.priority-chip.active-important { background: var(--important-bg); color: var(--important); border-color: var(--important); }
-.priority-chip.active-normal { background: var(--normal-bg); color: var(--normal); border-color: var(--normal); }
-.priority-chip.active-all { background: var(--text-primary); color: #fff; border-color: var(--text-primary); }
+/* Due Alert */
+.due-alert{background:linear-gradient(135deg,#fef8ec,#fdf0ed);border:2px solid #fde6a8;border-radius:var(--rl);padding:18px 20px;margin-bottom:18px}
+.due-alert-title{font-size:15px;font-weight:600;color:var(--important);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.due-alert-item{font-size:14px;color:var(--text);padding:6px 0;display:flex;align-items:center;gap:8px;border-bottom:1px solid #f5e8d0}
+.due-alert-item:last-child{border:none}
+.due-alert-proj{font-size:12px;color:var(--text3);background:var(--bg);padding:2px 8px;border-radius:6px}
 
-/* ── Project Card ── */
-.project-card { background: var(--surface); border: 1px solid var(--border); border-radius: var(--radius-lg); margin-bottom: 16px; overflow: hidden; box-shadow: var(--shadow-sm); transition: box-shadow .2s; }
-.project-card:hover { box-shadow: var(--shadow-md); }
-.project-header { display: flex; justify-content: space-between; align-items: center; padding: 14px 16px; cursor: pointer; user-select: none; }
-.project-header:hover { background: var(--surface-hover); }
-.project-left { display: flex; align-items: center; gap: 10px; flex: 1; }
-.project-arrow { font-size: 12px; color: var(--text-muted); width: 18px; transition: transform .2s; }
-.project-arrow.open { transform: rotate(90deg); }
-.project-name { font-size: 15px; font-weight: 600; }
-.priority-tag { font-size: 11px; padding: 2px 8px; border-radius: 6px; font-weight: 500; }
-.priority-tag.urgent { background: var(--urgent-bg); color: var(--urgent); }
-.priority-tag.important { background: var(--important-bg); color: var(--important); }
-.priority-tag.normal { background: var(--normal-bg); color: var(--normal); }
-.project-meta { display: flex; gap: 6px; align-items: center; flex-shrink: 0; }
-.meta-badge { font-size: 11px; color: var(--text-muted); background: var(--bg); padding: 2px 8px; border-radius: 6px; }
-.meta-badge.warn { color: var(--urgent); background: var(--urgent-bg); }
+/* Project Card */
+.proj-card{background:var(--surface);border:2px solid var(--border);border-radius:var(--rl);margin-bottom:18px;overflow:hidden;transition:box-shadow .2s}
+.proj-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.05)}
+.proj-head{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;gap:10px}
+.proj-toggle{display:flex;align-items:center;gap:10px;background:none;flex:1;text-align:left;cursor:pointer}
+.proj-arrow{font-size:13px;color:var(--text3);transition:transform .2s}
+.proj-arrow.open{transform:rotate(90deg)}
+.proj-name{font-size:17px;font-weight:600}
+.pri-tag{font-size:12px;padding:3px 10px;border-radius:8px;font-weight:500}
+.pri-tag.urgent{background:var(--urgent-bg);color:var(--urgent)}
+.pri-tag.important{background:var(--important-bg);color:var(--important)}
+.pri-tag.normal{background:var(--normal-bg);color:var(--normal)}
+.proj-right{display:flex;align-items:center;gap:8px;flex-shrink:0}
+.meta-badge{font-size:13px;color:var(--text2);background:var(--bg);padding:3px 10px;border-radius:8px}
+.meta-badge.warn{color:var(--urgent);background:var(--urgent-bg)}
+.tiny-btn{background:none;font-size:15px;padding:4px 8px;border-radius:8px;color:var(--text3)}
+.tiny-btn:hover{background:var(--border-light)}
+.danger-sm{background:var(--urgent-bg);font-size:13px;padding:4px 12px;border-radius:8px;color:var(--urgent);font-weight:500}
 
-/* ── Project Progress ── */
-.project-progress { padding: 0 16px 12px; display: flex; align-items: center; gap: 10px; }
-.progress-track { flex: 1; height: 5px; background: var(--border-light); border-radius: 4px; overflow: hidden; }
-.progress-fill { height: 100%; border-radius: 4px; background: var(--accent); transition: width .4s ease; }
-.progress-pct { font-size: 12px; font-weight: 600; color: var(--accent); min-width: 36px; text-align: right; }
+/* Progress */
+.prog-wrap{display:flex;align-items:center;gap:12px;padding:0 20px 16px}
+.prog-track{flex:1;height:10px;background:var(--border-light);border-radius:6px;overflow:hidden}
+.prog-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--accent),#3a7432);transition:width .4s ease}
+.prog-pct{font-size:14px;font-weight:700;color:var(--accent);min-width:42px;text-align:right}
 
-/* ── Task List ── */
-.task-list { padding: 0 12px 12px; }
-.task-card { background: var(--bg); border-radius: var(--radius); padding: 12px 14px; margin-bottom: 6px; border-left: 3px solid var(--border); transition: all .2s; }
-.task-card:hover { box-shadow: 0 2px 10px rgba(26,24,22,.04); transform: translateY(-1px); }
-.task-card.mine { border-left-color: var(--accent); }
-.task-top { display: flex; justify-content: space-between; align-items: flex-start; gap: 8px; }
-.task-name { font-size: 14px; font-weight: 500; line-height: 1.5; flex: 1; }
-.task-desc { font-size: 12px; color: var(--text-secondary); margin-top: 4px; line-height: 1.6; background: var(--surface); padding: 8px 10px; border-radius: 6px; border: 1px solid var(--border-light); }
-.task-meta { display: flex; gap: 8px; margin-top: 8px; flex-wrap: wrap; align-items: center; }
-.assignee-tag { font-size: 12px; color: var(--accent); background: var(--accent-light); padding: 2px 8px; border-radius: 6px; }
-.due-tag { font-size: 12px; padding: 2px 8px; border-radius: 6px; }
-.due-tag.overdue { color: var(--urgent); background: var(--urgent-bg); font-weight: 600; }
-.due-tag.soon { color: var(--important); background: var(--important-bg); font-weight: 500; }
-.due-tag.normal { color: var(--text-muted); background: var(--bg); }
-.task-bottom { display: flex; align-items: center; gap: 10px; margin-top: 8px; }
-.status-badge { padding: 3px 10px; border-radius: 16px; font-size: 12px; font-weight: 500; display: inline-flex; align-items: center; gap: 4px; cursor: pointer; border: none; font-family: var(--font-body); transition: all .15s; }
-.status-badge:hover { filter: brightness(.95); }
-.task-actions { display: flex; gap: 4px; flex-shrink: 0; }
-.tiny-btn { background: none; border: none; font-size: 13px; padding: 3px 6px; border-radius: 6px; color: var(--text-muted); cursor: pointer; }
-.tiny-btn:hover { background: var(--border-light); }
-.tiny-btn.danger { color: var(--urgent); background: var(--urgent-bg); font-size: 11px; padding: 3px 8px; font-weight: 500; font-family: var(--font-body); }
+/* Task */
+.task-list{padding:0 14px 14px}
+.task-card{background:var(--bg);border-radius:var(--r);padding:16px 18px;margin-bottom:8px;border-left:4px solid var(--border);display:flex;flex-direction:column;gap:12px;transition:all .2s}
+.task-card:hover{box-shadow:0 3px 12px rgba(0,0,0,.04);transform:translateY(-1px)}
+.task-card.mine{border-left-color:var(--accent)}
+.task-text{font-size:16px;font-weight:500;line-height:1.6;flex:1}
+.task-desc{font-size:14px;color:var(--text2);margin-top:6px;line-height:1.7;background:var(--surface);padding:10px 14px;border-radius:8px;border:1px solid var(--border-light)}
+.task-meta{display:flex;gap:8px;margin-top:8px;flex-wrap:wrap;align-items:center}
+.assignee-tag{font-size:13px;color:var(--accent);background:var(--accent-light);padding:3px 10px;border-radius:8px}
+.due-tag{font-size:13px;padding:3px 10px;border-radius:8px}
+.due-tag.overdue{color:var(--urgent);background:var(--urgent-bg);font-weight:600}
+.due-tag.soon{color:var(--important);background:var(--important-bg);font-weight:500}
+.due-tag.ok{color:var(--text3);background:var(--bg)}
+.due-tag.done{color:var(--done);background:var(--done-bg)}
+.task-bottom{display:flex;align-items:center;gap:12px;margin-top:4px}
+.status-badge{padding:5px 14px;border-radius:20px;font-size:13px;font-weight:500;display:inline-flex;align-items:center;gap:5px;cursor:pointer;transition:all .15s}
+.status-badge:hover{filter:brightness(.93)}
+.bar-track{flex:1;height:8px;background:var(--border-light);border-radius:5px;overflow:hidden}
+.bar-fill{height:100%;border-radius:5px;transition:width .4s ease}
+.pct-label{font-size:13px;font-weight:700;min-width:34px;text-align:right}
 
-/* ── Weekly Note ── */
-.weekly-note { margin-top: 8px; }
-.weekly-note-label { font-size: 11px; color: var(--text-muted); margin-bottom: 4px; }
-.weekly-note-text { font-size: 12px; color: var(--text-secondary); background: var(--surface); padding: 6px 10px; border-radius: 6px; border: 1px solid var(--border-light); line-height: 1.5; }
-.weekly-note-input { width: 100%; padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 6px; font-size: 12px; font-family: var(--font-body); outline: none; resize: vertical; min-height: 36px; background: var(--surface); }
-.weekly-note-input:focus { border-color: var(--accent); }
+/* Notes */
+.notes-section{margin-top:8px}
+.notes-label{font-size:13px;color:var(--text3);font-weight:500;margin-bottom:6px;display:flex;align-items:center;gap:6px;cursor:pointer}
+.note-item{font-size:13px;color:var(--text2);background:var(--surface);padding:8px 12px;border-radius:8px;border:1px solid var(--border-light);margin-bottom:4px;line-height:1.6}
+.note-date{font-size:11px;color:var(--text3);font-weight:500;margin-bottom:2px}
+.note-input{width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:var(--r);font-size:14px;outline:none;resize:vertical;min-height:44px;background:var(--surface)}
+.note-input:focus{border-color:var(--accent)}
 
-/* ── Add Task ── */
-.add-task-btn { width: 100%; padding: 10px; border-radius: 8px; background: transparent; border: 1.5px dashed var(--border); color: var(--text-muted); font-size: 13px; cursor: pointer; font-family: var(--font-body); transition: all .2s; margin-top: 4px; }
-.add-task-btn:hover { border-color: var(--text-muted); color: var(--text-secondary); }
-.add-task-form { background: var(--surface); border-radius: var(--radius); padding: 14px; margin-top: 6px; border: 1.5px solid var(--border); }
-.form-group { margin-bottom: 10px; }
-.form-label { font-size: 11px; color: var(--text-muted); font-weight: 500; margin-bottom: 4px; display: block; }
-.form-input { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 14px; font-family: var(--font-body); outline: none; background: var(--bg); }
-.form-input:focus { border-color: var(--accent); background: var(--surface); }
-.form-textarea { width: 100%; padding: 10px 12px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 13px; font-family: var(--font-body); outline: none; background: var(--bg); resize: vertical; min-height: 60px; }
-.form-textarea:focus { border-color: var(--accent); background: var(--surface); }
-.form-row { display: flex; gap: 10px; }
-.form-col { flex: 1; }
-.form-input-sm { width: 100%; padding: 8px 10px; border: 1.5px solid var(--border); border-radius: 8px; font-size: 13px; font-family: var(--font-body); outline: none; background: var(--bg); }
-.form-input-sm:focus { border-color: var(--accent); background: var(--surface); }
-.status-picker { display: flex; gap: 6px; flex-wrap: wrap; }
-.status-opt { padding: 5px 11px; border-radius: 8px; font-size: 12px; background: var(--bg); color: var(--text-secondary); border: 1.5px solid var(--border); cursor: pointer; font-family: var(--font-body); transition: all .15s; }
-.status-opt.active { font-weight: 600; }
-.form-actions { display: flex; gap: 8px; justify-content: flex-end; margin-top: 12px; }
-.btn-cancel { padding: 8px 18px; border-radius: 8px; background: var(--bg); color: var(--text-secondary); font-size: 13px; font-weight: 500; border: none; cursor: pointer; font-family: var(--font-body); }
-.btn-cancel:hover { background: var(--border); }
-.btn-ok { padding: 8px 18px; border-radius: 8px; background: var(--accent); color: #fff; font-size: 13px; font-weight: 500; border: none; cursor: pointer; font-family: var(--font-body); }
-.btn-ok:hover { background: var(--accent-hover); }
+/* Forms */
+.form-card{background:var(--surface);border-radius:var(--rl);padding:24px;margin-bottom:18px;border:2px solid var(--border);display:flex;flex-direction:column;gap:14px}
+.form-title{font-size:16px;font-weight:600}
+.input{padding:13px 16px;border-radius:var(--r);border:2px solid var(--border);font-size:15px;outline:none;background:var(--bg);width:100%}
+.input:focus{border-color:var(--accent);background:var(--surface)}
+.input-sm{padding:10px 14px;border-radius:10px;border:2px solid var(--border);font-size:14px;outline:none;background:var(--bg);width:100%}
+.input-sm:focus{border-color:var(--accent);background:var(--surface)}
+.textarea{padding:13px 16px;border-radius:var(--r);border:2px solid var(--border);font-size:14px;outline:none;background:var(--bg);width:100%;resize:vertical;min-height:60px}
+.textarea:focus{border-color:var(--accent);background:var(--surface)}
+.form-label{font-size:13px;color:var(--text3);font-weight:500;margin-bottom:4px;display:block}
+.field-row{display:flex;gap:12px}
+.field-col{flex:1;display:flex;flex-direction:column;gap:4px}
+.status-picker{display:flex;gap:8px;flex-wrap:wrap}
+.status-opt{padding:7px 14px;border-radius:10px;font-size:13px;background:var(--bg);color:var(--text2);border:2px solid var(--border);transition:all .15s}
+.status-opt.active{font-weight:600}
+.form-row{display:flex;gap:10px;justify-content:flex-end}
+.btn-cancel{padding:10px 22px;border-radius:var(--r);background:var(--bg);color:var(--text2);font-size:14px;font-weight:500}
+.btn-cancel:hover{background:var(--border)}
+.btn-ok{padding:10px 22px;border-radius:var(--r);background:var(--accent);color:#fff;font-size:14px;font-weight:500}
+.btn-ok:hover{background:var(--accent-hover)}
 
-/* ── Empty ── */
-.empty-state { text-align: center; padding: 60px 20px; }
-.empty-icon { font-size: 44px; margin-bottom: 12px; }
-.empty-text { font-size: 14px; color: var(--text-muted); }
+/* Assignee multi-select */
+.assignee-grid{display:flex;flex-wrap:wrap;gap:6px}
+.assignee-opt{padding:6px 12px;border-radius:8px;font-size:13px;background:var(--bg);color:var(--text2);border:2px solid var(--border);transition:all .15s}
+.assignee-opt.selected{background:var(--accent-light);color:var(--accent);border-color:var(--accent);font-weight:600}
 
-/* ── Loading ── */
-.loading-overlay { position: fixed; inset: 0; background: var(--bg); display: flex; flex-direction: column; align-items: center; justify-content: center; z-index: 200; }
-.loading-spinner { width: 28px; height: 28px; border: 3px solid var(--border); border-top-color: var(--accent); border-radius: 50%; animation: spin .8s linear infinite; }
-.loading-text { margin-top: 12px; color: var(--text-muted); font-size: 13px; }
+/* Add task */
+.add-task-btn{width:100%;padding:14px;border-radius:var(--r);background:transparent;border:2px dashed var(--border);color:var(--text3);font-size:14px;font-weight:500;margin-top:6px;transition:all .2s}
+.add-task-btn:hover{border-color:var(--text3);color:var(--text2)}
+.add-task-form{background:var(--surface);border-radius:var(--r);padding:18px;margin-top:8px;border:2px solid var(--border);display:flex;flex-direction:column;gap:12px}
 
-/* ── Toast ── */
-.toast { position: fixed; bottom: 24px; left: 50%; transform: translateX(-50%); background: var(--text-primary); color: #fff; padding: 10px 20px; border-radius: 10px; font-size: 13px; font-weight: 500; z-index: 200; box-shadow: 0 8px 24px rgba(0,0,0,.15); opacity: 0; transition: opacity .3s; pointer-events: none; }
-.toast.show { opacity: 1; }
+/* New project */
+.new-proj-btn{width:100%;padding:16px;border-radius:var(--rl);background:var(--surface);border:2px dashed #d1cdc6;color:var(--text2);font-size:15px;font-weight:500;margin-bottom:18px;display:flex;align-items:center;justify-content:center;gap:8px}
+.new-proj-btn:hover{border-color:var(--text3);color:var(--text)}
 
-/* ── Responsive ── */
-@media (max-width: 480px) {
-  .form-row { flex-direction: column; gap: 8px; }
-  .topbar { padding: 12px 14px; }
-  .container { padding: 16px 12px 80px; }
-}
+/* Empty */
+.empty{text-align:center;padding:60px 24px}
+.empty-icon{font-size:48px;margin-bottom:14px}
+.empty-text{font-size:15px;color:var(--text3)}
+
+/* Toast */
+.toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.15);opacity:0;transition:opacity .3s;pointer-events:none}
+.toast.show{opacity:1}
+
+/* Loading */
+.loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;gap:14px}
+.spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
+
+@media(max-width:480px){.field-row{flex-direction:column;gap:10px}.topbar{padding:14px 16px}.container{padding:20px 14px 80px}.proj-head{padding:14px 16px}.task-card{padding:14px 16px}}
 </style>
 </head>
 <body>
-
-<div id="app">
-  <div class="loading-overlay" id="loading">
-    <div class="loading-spinner"></div>
-    <p class="loading-text">連線 Firebase 中...</p>
-  </div>
-</div>
-
+<div id="app"><div class="loading" id="loading"><div class="spinner"></div><p style="color:var(--text3);font-size:14px">連線中...</p></div></div>
 <div class="toast" id="toast"></div>
 
-<!-- Firebase SDK -->
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
 import { getFirestore, collection, doc, getDocs, addDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
-const firebaseConfig = {
-  apiKey: "AIzaSyA31PYM4v853tOEqi7xqwyGigEncDx64mM",
-  authDomain: "weekreport-a9e81.firebaseapp.com",
-  projectId: "weekreport-a9e81",
-  storageBucket: "weekreport-a9e81.firebasestorage.app",
-  messagingSenderId: "962006056350",
-  appId: "1:962006056350:web:d556a7f6ca34376f27aa8f"
-};
-
-const app = initializeApp(firebaseConfig);
+const app = initializeApp({
+  apiKey:"AIzaSyA31PYM4v853tOEqi7xqwyGigEncDx64mM",authDomain:"weekreport-a9e81.firebaseapp.com",
+  projectId:"weekreport-a9e81",storageBucket:"weekreport-a9e81.firebasestorage.app",
+  messagingSenderId:"962006056350",appId:"1:962006056350:web:d556a7f6ca34376f27aa8f"
+});
 const db = getFirestore(app);
 
-/* ════════════════════════════════
-   STATE
-   ════════════════════════════════ */
+/* ═══ STATE ═══ */
 let currentUser = localStorage.getItem("tracker-user") || "";
-let projects = [];
-let members = [];
-let expandedProjects = {};
-let addingTaskTo = null;
-let editingTask = null;
-let deleteConfirm = null;
-let editingWeeklyNote = null;
-let statusFilter = "all";
-let priorityFilter = "all";
-let viewMode = "all"; // "all" or "mine"
+let projects = [], members = [];
+let expandedProjects = {}, statusFilter = "all", priorityFilter = "all", viewMode = "all";
+let showNewProject = false, newProjectName = "", newProjectPriority = "normal";
+let addingTaskTo = null, newTask = { text:"", description:"", assignees:[], due:"", status:"not_started" };
+let editingTask = null, editData = {};
+let deleteConfirm = null, addingNoteTo = null, searchQuery = "";
 
 const STATUS = [
-  { value: "not_started", label: "尚未開始", icon: "○", color: "var(--status-not-started)", bg: "var(--status-not-started-bg)", pct: 0 },
-  { value: "in_progress", label: "進行中", icon: "◐", color: "var(--status-progress)", bg: "var(--status-progress-bg)", pct: 50 },
-  { value: "done", label: "已完成", icon: "●", color: "var(--status-done)", bg: "var(--status-done-bg)", pct: 100 },
-  { value: "blocked", label: "卡關", icon: "✕", color: "var(--status-blocked)", bg: "var(--status-blocked-bg)", pct: 25 },
+  {v:"not_started",l:"尚未開始",i:"○",c:"var(--ns)",bg:"var(--ns-bg)",rc:"#94a3b8",p:0},
+  {v:"in_progress",l:"進行中",i:"◐",c:"var(--ip)",bg:"var(--ip-bg)",rc:"#d97706",p:50},
+  {v:"done",l:"已完成",i:"●",c:"var(--done)",bg:"var(--done-bg)",rc:"#16a34a",p:100},
+  {v:"blocked",l:"卡關",i:"✕",c:"var(--block)",bg:"var(--block-bg)",rc:"#dc2626",p:25},
 ];
-
-const PRIORITIES = [
-  { value: "urgent", label: "🔴 緊急", css: "urgent" },
-  { value: "important", label: "🟡 重要", css: "important" },
-  { value: "normal", label: "🔵 一般", css: "normal" },
+const PRIS = [
+  {v:"urgent",l:"🔴 緊急",css:"urgent"},{v:"important",l:"🟡 重要",css:"important"},{v:"normal",l:"🔵 一般",css:"normal"}
 ];
+const gs=v=>STATUS.find(s=>s.v===v)||STATUS[0];
+const gp=v=>PRIS.find(p=>p.v===v)||PRIS[2];
 
-function gs(v) { return STATUS.find(s => s.value === v) || STATUS[0]; }
-function gp(v) { return PRIORITIES.find(p => p.value === v) || PRIORITIES[2]; }
-
-function dueInfo(dateStr, status) {
-  if (status === "done") return dateStr ? { label: "✓ 已完成", cls: "normal" } : null;
-  if (!dateStr) return { label: "未設定", cls: "normal" };
-  const today = new Date(); today.setHours(0,0,0,0);
-  const d = new Date(dateStr + "T00:00:00");
-  const diff = Math.ceil((d - today) / 86400000);
-  if (diff < 0) return { label: `逾期 ${-diff} 天`, cls: "overdue" };
-  if (diff === 0) return { label: "今天到期", cls: "overdue" };
-  if (diff <= 3) return { label: `${diff} 天後到期`, cls: "soon" };
-  return { label: `${diff} 天後`, cls: "normal" };
+function dueInfo(d,st){
+  if(st==="done")return d?{l:"✓ 已完成",cls:"done"}:null;
+  if(!d)return null;
+  const today=new Date();today.setHours(0,0,0,0);
+  const dd=new Date(d+"T00:00:00"),diff=Math.ceil((dd-today)/864e5);
+  if(diff<0)return{l:`逾期 ${-diff} 天`,cls:"overdue"};
+  if(diff===0)return{l:"今天到期",cls:"overdue"};
+  if(diff<=3)return{l:`${diff} 天後到期`,cls:"soon"};
+  return{l:`${diff} 天後`,cls:"ok"};
 }
+function getAssignees(task){ return Array.isArray(task.assignees) ? task.assignees : (task.assignee ? [task.assignee] : []); }
+function isMyTask(task){ return getAssignees(task).includes(currentUser); }
+function projProg(tasks){ return tasks.length?Math.round(tasks.reduce((s,t)=>s+gs(t.status).p,0)/tasks.length):0; }
+function esc(s){if(!s)return"";const d=document.createElement("div");d.textContent=s;return d.innerHTML}
+function toast(m){const e=document.getElementById("toast");e.textContent=m;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),2000)}
+function thisWeekMonday(){const d=new Date();const day=d.getDay();const diff=d.getDate()-day+(day===0?-6:1);return new Date(d.setDate(diff)).toISOString().slice(0,10)}
 
-function toast(msg) {
-  const el = document.getElementById("toast");
-  el.textContent = msg;
-  el.classList.add("show");
-  setTimeout(() => el.classList.remove("show"), 2000);
-}
-
-/* ════════════════════════════════
-   FIREBASE LISTENERS
-   ════════════════════════════════ */
-function initListeners() {
-  // Members
-  onSnapshot(collection(db, "members"), (snap) => {
-    members = snap.docs.map(d => ({ id: d.id, ...d.data() }));
-    members.sort((a, b) => (a.name || "").localeCompare(b.name || ""));
-    render();
+/* ═══ FIREBASE LISTENERS ═══ */
+onSnapshot(collection(db,"members"),snap=>{
+  members=snap.docs.map(d=>({id:d.id,...d.data()}));
+  members.sort((a,b)=>(a.name||"").localeCompare(b.name||""));
+  render();
+});
+onSnapshot(query(collection(db,"projects"),orderBy("createdAt","desc")),snap=>{
+  projects=snap.docs.map(d=>({id:d.id,...d.data(),tasks:[]}));
+  projects.forEach(p=>{
+    if(expandedProjects[p.id]===undefined)expandedProjects[p.id]=true;
+    onSnapshot(query(collection(db,"projects",p.id,"tasks"),orderBy("createdAt","asc")),ts=>{
+      p.tasks=ts.docs.map(td=>({id:td.id,...td.data()}));
+      render();
+    });
   });
+  render();
+});
+setTimeout(()=>render(),2500);
 
-  // Projects + tasks (projects collection, tasks as subcollection)
-  onSnapshot(query(collection(db, "projects"), orderBy("createdAt", "desc")), (snap) => {
-    // For each project, listen to tasks subcollection
-    projects = [];
-    snap.docs.forEach(d => {
-      const proj = { id: d.id, ...d.data(), tasks: [] };
-      if (expandedProjects[proj.id] === undefined) expandedProjects[proj.id] = true;
-      projects.push(proj);
-    });
-    // Now listen to tasks for each project
-    projects.forEach(proj => {
-      onSnapshot(query(collection(db, "projects", proj.id, "tasks"), orderBy("createdAt", "asc")), (taskSnap) => {
-        proj.tasks = taskSnap.docs.map(td => ({ id: td.id, ...td.data() }));
-        render();
-      });
-    });
-    render();
-  });
+/* ═══ FIREBASE OPS ═══ */
+async function fbAddProject(name,priority){
+  try{await addDoc(collection(db,"projects"),{name,priority,createdBy:currentUser,createdAt:serverTimestamp()});toast("已建立專案")}catch(e){toast("建立失敗："+e.message)}
+}
+async function fbDeleteProject(pid){
+  try{const ts=await getDocs(collection(db,"projects",pid,"tasks"));for(const t of ts.docs)await deleteDoc(doc(db,"projects",pid,"tasks",t.id));await deleteDoc(doc(db,"projects",pid));toast("已刪除專案")}catch(e){toast("刪除失敗："+e.message)}
+}
+async function fbAddTask(pid,task){
+  try{await addDoc(collection(db,"projects",pid,"tasks"),{
+    ...task,notes:[],statusHistory:[{from:null,to:task.status,at:new Date().toISOString(),by:currentUser}],
+    createdAt:serverTimestamp(),updatedAt:serverTimestamp()
+  });toast("已新增")}catch(e){toast("新增失敗："+e.message)}
+}
+async function fbUpdateTask(pid,tid,updates){
+  try{await updateDoc(doc(db,"projects",pid,"tasks",tid),{...updates,updatedAt:serverTimestamp()})}catch(e){toast("更新失敗："+e.message)}
+}
+async function fbDeleteTask(pid,tid){
+  try{await deleteDoc(doc(db,"projects",pid,"tasks",tid));toast("已刪除")}catch(e){toast("刪除失敗："+e.message)}
+}
+async function fbCycleStatus(pid,task){
+  const order=["not_started","in_progress","done","blocked"];
+  const ns=order[(order.indexOf(task.status)+1)%4];
+  const h=[...(task.statusHistory||[]),{from:task.status,to:ns,at:new Date().toISOString(),by:currentUser}];
+  await fbUpdateTask(pid,task.id,{status:ns,statusHistory:h});
+}
+async function fbAddNote(pid,tid,text,existingNotes){
+  const notes=[...(existingNotes||[]),{text,date:new Date().toISOString().slice(0,10),by:currentUser,at:new Date().toISOString()}];
+  await fbUpdateTask(pid,tid,{notes});toast("備註已新增");
 }
 
-/* ════════════════════════════════
-   FIREBASE OPERATIONS
-   ════════════════════════════════ */
-let showNewProject = false;
-let newProjectName = "";
-let newProjectPriority = "normal";
+/* ═══ RENDER ═══ */
+function render(){
+  const el=document.getElementById("app");
+  if(!currentUser){el.innerHTML=renderIdentity();return}
+  const loadingEl=document.getElementById("loading");if(loadingEl)loadingEl.style.display="none";
 
-async function fbAddProject(name, priority) {
-  try {
-    await addDoc(collection(db, "projects"), {
-      name, priority, createdBy: currentUser, createdAt: serverTimestamp(),
-    });
-    toast("已建立專案");
-  } catch (e) { toast("建立失敗：" + e.message); }
-}
+  const allTasks=projects.flatMap(p=>p.tasks);
+  const counts=STATUS.map(s=>({...s,count:allTasks.filter(t=>t.status===s.v).length}));
 
-async function fbDeleteProject(projId) {
-  try {
-    const taskSnap = await getDocs(collection(db, "projects", projId, "tasks"));
-    for (const t of taskSnap.docs) await deleteDoc(doc(db, "projects", projId, "tasks", t.id));
-    await deleteDoc(doc(db, "projects", projId));
-    toast("已刪除專案");
-  } catch (e) { toast("刪除失敗：" + e.message); }
-}
+  // Due in 3 days alert items
+  const today=new Date();today.setHours(0,0,0,0);
+  const dueSoonItems=[];
+  projects.forEach(p=>{p.tasks.forEach(t=>{
+    if(t.status==="done"||!t.due)return;
+    const assignees=getAssignees(t);
+    if(!assignees.includes(currentUser))return;
+    const dd=new Date(t.due+"T00:00:00"),diff=Math.ceil((dd-today)/864e5);
+    if(diff<=3)dueSoonItems.push({...t,projectName:p.name,diff});
+  })});
+  dueSoonItems.sort((a,b)=>a.diff-b.diff);
 
-async function fbAddTask(projId, task) {
-  try {
-    await addDoc(collection(db, "projects", projId, "tasks"), {
-      ...task,
-      statusHistory: [{ from: null, to: task.status, at: new Date().toISOString(), by: currentUser }],
-      createdAt: serverTimestamp(),
-      updatedAt: serverTimestamp(),
-    });
-    toast("已新增工作項目");
-  } catch (e) { toast("新增失敗：" + e.message); }
-}
-
-async function fbUpdateTask(projId, taskId, updates) {
-  try {
-    await updateDoc(doc(db, "projects", projId, "tasks", taskId), {
-      ...updates,
-      updatedAt: serverTimestamp(),
-    });
-  } catch (e) { toast("更新失敗：" + e.message); }
-}
-
-async function fbDeleteTask(projId, taskId) {
-  try {
-    await deleteDoc(doc(db, "projects", projId, "tasks", taskId));
-    toast("已刪除");
-  } catch (e) { toast("刪除失敗：" + e.message); }
-}
-
-async function fbCycleStatus(projId, task) {
-  const order = ["not_started", "in_progress", "done", "blocked"];
-  const newStatus = order[(order.indexOf(task.status) + 1) % 4];
-  const history = task.statusHistory || [];
-  history.push({ from: task.status, to: newStatus, at: new Date().toISOString(), by: currentUser });
-  await fbUpdateTask(projId, task.id, { status: newStatus, statusHistory: history });
-}
-
-/* ════════════════════════════════
-   RENDER
-   ════════════════════════════════ */
-function render() {
-  const appEl = document.getElementById("app");
-  if (!currentUser) {
-    appEl.innerHTML = renderIdentity();
-    return;
+  // Filter
+  let filtered=projects;
+  if(viewMode==="mine"){
+    filtered=filtered.map(p=>({...p,tasks:p.tasks.filter(t=>isMyTask(t))})).filter(p=>p.tasks.length>0||p.createdBy===currentUser);
   }
-  const loadingEl = document.getElementById("loading");
-  if (loadingEl) loadingEl.style.display = "none";
-
-  const allTasks = projects.flatMap(p => p.tasks);
-  const counts = STATUS.map(s => ({ ...s, count: allTasks.filter(t => t.status === s.value).length }));
-  const overdueCount = allTasks.filter(t => t.status !== "done" && t.due && (dueInfo(t.due, t.status)?.cls === "overdue")).length;
-
-  let filtered = projects;
-  // View mode filter: mine = only show tasks assigned to me (keep project if any task is mine)
-  if (viewMode === "mine") {
-    filtered = filtered.map(p => ({
-      ...p,
-      tasks: p.tasks.filter(t => t.assignee === currentUser),
-    })).filter(p => p.tasks.length > 0 || p.createdBy === currentUser);
-  }
-  if (priorityFilter !== "all") {
-    filtered = filtered.filter(p => p.priority === priorityFilter);
-  }
-  filtered = filtered.map(p => ({
-    ...p,
-    tasks: statusFilter === "all" ? p.tasks : p.tasks.filter(t => t.status === statusFilter),
-  })).filter(p => statusFilter === "all" || p.tasks.length > 0);
-
-  let html = `
-    <div class="topbar">
-      <div class="topbar-left">
-        <div class="topbar-logo">◈</div>
-        <span class="topbar-title">專案追蹤器</span>
-      </div>
-      <div class="topbar-user">
-        <div class="topbar-avatar">${currentUser.charAt(0)}</div>
-        <span class="topbar-name">${currentUser}</span>
-        <button class="topbar-switch" onclick="switchUser()">切換</button>
-      </div>
-    </div>
-    <div class="container">
-  `;
-
-  // Overdue alert
-  if (overdueCount > 0) {
-    html += `<div style="background:var(--urgent-bg);border:1px solid #fecaca;border-radius:var(--radius);padding:10px 16px;margin-bottom:16px;font-size:13px;color:var(--urgent);" class="fade-up">⚠️ 有 <strong>${overdueCount}</strong> 個工作項目已逾期</div>`;
+  if(priorityFilter!=="all")filtered=filtered.filter(p=>p.priority===priorityFilter);
+  filtered=filtered.map(p=>({...p,tasks:statusFilter==="all"?p.tasks:p.tasks.filter(t=>t.status===statusFilter)})).filter(p=>statusFilter==="all"||p.tasks.length>0);
+  // Search
+  if(searchQuery){
+    const q=searchQuery.toLowerCase();
+    filtered=filtered.map(p=>({...p,tasks:p.tasks.filter(t=>t.text?.toLowerCase().includes(q)||t.description?.toLowerCase().includes(q)||getAssignees(t).some(a=>a.toLowerCase().includes(q)))})).filter(p=>p.name?.toLowerCase().includes(q)||p.tasks.length>0);
   }
 
-  // View mode toggle
-  html += `<div style="display:flex;gap:4px;margin-bottom:12px;background:#ede9e4;border-radius:10px;padding:3px">
-    <button style="flex:1;padding:9px;border-radius:8px;font-size:13px;font-weight:${viewMode==='all'?'600':'500'};background:${viewMode==='all'?'#fff':'transparent'};color:${viewMode==='all'?'var(--text-primary)':'var(--text-secondary)'};border:none;cursor:pointer;text-align:center;font-family:inherit;${viewMode==='all'?'box-shadow:0 1px 4px rgba(0,0,0,.06)':''}" onclick="window.setViewMode('all')">👥 全部人</button>
-    <button style="flex:1;padding:9px;border-radius:8px;font-size:13px;font-weight:${viewMode==='mine'?'600':'500'};background:${viewMode==='mine'?'#fff':'transparent'};color:${viewMode==='mine'?'var(--text-primary)':'var(--text-secondary)'};border:none;cursor:pointer;text-align:center;font-family:inherit;${viewMode==='mine'?'box-shadow:0 1px 4px rgba(0,0,0,.06)':''}" onclick="window.setViewMode('mine')">👤 只看我的</button>
+  let h=`<div class="topbar">
+    <div class="topbar-left"><div class="topbar-logo">◈</div><span class="topbar-title">專案追蹤器</span></div>
+    <div class="topbar-user"><div class="topbar-avatar">${currentUser.charAt(0)}</div><span class="topbar-name">${esc(currentUser)}</span><button class="topbar-switch" onclick="window.switchUser()">切換</button></div>
+  </div><div class="container">`;
+
+  // Due alert
+  if(dueSoonItems.length>0){
+    h+=`<div class="due-alert fu"><div class="due-alert-title">⏰ 即將到期的工作（${dueSoonItems.length} 項）</div>`;
+    dueSoonItems.forEach(t=>{
+      const di=dueInfo(t.due,t.status);
+      h+=`<div class="due-alert-item"><span class="due-tag ${di.cls}" style="font-size:12px">📅 ${di.l}</span><span style="flex:1;font-size:14px">${esc(t.text)}</span><span class="due-alert-proj">${esc(t.projectName)}</span></div>`;
+    });
+    h+=`</div>`;
+  }
+
+  // Search
+  h+=`<div class="search-bar"><div class="search-wrap"><span class="search-icon">🔍</span><input class="search-input" placeholder="搜尋專案或工作項目..." value="${esc(searchQuery)}" oninput="window.setSearch(this.value)"></div></div>`;
+
+  // View toggle
+  h+=`<div class="view-toggle">
+    <button class="view-btn ${viewMode==='all'?'on':''}" onclick="window.setView('all')">👥 全部人</button>
+    <button class="view-btn ${viewMode==='mine'?'on':''}" onclick="window.setView('mine')">👤 只看我的</button>
   </div>`;
 
   // Priority filter
-  html += `<div class="priority-bar">
-    <button class="priority-chip ${priorityFilter === 'all' ? 'active-all' : ''}" onclick="setPriorityFilter('all')">全部專案</button>
-    ${PRIORITIES.map(p => `<button class="priority-chip ${priorityFilter === p.value ? 'active-' + p.css : ''}" onclick="setPriorityFilter('${p.value}')">${p.label}</button>`).join("")}
+  h+=`<div class="filter-row">
+    <button class="chip ${priorityFilter==='all'?'on':''}" onclick="window.setPri('all')">全部專案</button>
+    ${PRIS.map(p=>`<button class="chip ${priorityFilter===p.v?'on':''}" onclick="window.setPri('${p.v}')">${p.l}</button>`).join("")}
   </div>`;
 
   // Status filter
-  html += `<div class="filter-bar">
-    <button class="filter-chip ${statusFilter === 'all' ? 'active' : ''}" onclick="setStatusFilter('all')">全部 ${allTasks.length}</button>
-    ${counts.map(s => `<button class="filter-chip ${statusFilter === s.value ? 'active' : ''}" onclick="setStatusFilter('${s.value}')">${s.icon} ${s.label} ${s.count}</button>`).join("")}
+  h+=`<div class="filter-row">
+    <button class="chip ${statusFilter==='all'?'on':''}" onclick="window.setSt('all')">全部 ${allTasks.length}</button>
+    ${counts.map(s=>`<button class="chip ${statusFilter===s.v?'on':''}" style="${statusFilter===s.v?`background:${s.rc};color:#fff;border-color:${s.rc}`:`color:${s.rc};border-color:${s.rc}44`}" onclick="window.setSt('${s.v}')">${s.i} ${s.l} ${s.count}</button>`).join("")}
   </div>`;
 
-  // New project button/form
-  if (!showNewProject) {
-    html += `<button class="add-task-btn" style="margin-bottom:16px;padding:14px;border-radius:var(--radius-lg);font-size:14px;font-weight:500;border-width:2px" onclick="window.showNewProjectForm()"><span style="font-size:20px;font-weight:300">+</span> 建立新專案</button>`;
-  } else {
-    html += `<div style="background:var(--surface);border-radius:var(--radius-lg);padding:20px;margin-bottom:16px;border:1px solid var(--border);display:flex;flex-direction:column;gap:12px" class="fade-up">
-      <div style="font-size:14px;font-weight:600">建立新專案</div>
-      <input class="form-input" id="newProjName" placeholder="專案名稱（例：官網改版）" style="padding:11px 14px;border-radius:var(--radius);border:1.5px solid var(--border);font-size:14px;outline:none;background:var(--bg);width:100%">
-      <div style="font-size:12px;color:var(--text-muted);margin-bottom:2px">重要性</div>
-      <div style="display:flex;gap:6px;flex-wrap:wrap">
-        ${PRIORITIES.map(p => `<button class="status-opt ${newProjectPriority === p.value ? 'active' : ''}" style="padding:5px 11px;border-radius:8px;font-size:12px;background:var(--bg);color:var(--text-secondary);border:1.5px solid var(--border);${newProjectPriority === p.value ? `background:${p.css === 'urgent' ? 'var(--urgent-bg)' : p.css === 'important' ? 'var(--important-bg)' : 'var(--normal-bg)'};color:${p.css === 'urgent' ? 'var(--urgent)' : p.css === 'important' ? 'var(--important)' : 'var(--normal)'};border-color:${p.css === 'urgent' ? 'var(--urgent)' : p.css === 'important' ? 'var(--important)' : 'var(--normal)'};font-weight:600` : ''}" onclick="window.setNewProjPri('${p.value}')">${p.label}</button>`).join("")}
-      </div>
-      <div style="display:flex;gap:8px;justify-content:flex-end">
-        <button style="padding:8px 18px;border-radius:var(--radius);background:var(--bg);color:var(--text-secondary);font-size:13px;font-weight:500" onclick="window.hideNewProject()">取消</button>
-        <button style="padding:8px 18px;border-radius:var(--radius);background:var(--accent);color:#fff;font-size:13px;font-weight:500" onclick="window.doAddProject()">建立</button>
-      </div>
+  // New project
+  if(!showNewProject){
+    h+=`<button class="new-proj-btn" onclick="window.showNewProjForm()"><span style="font-size:22px;font-weight:300">+</span> 建立新專案</button>`;
+  }else{
+    h+=`<div class="form-card fu">
+      <div class="form-title">建立新專案</div>
+      <input class="input" id="newProjName" placeholder="專案名稱">
+      <div class="form-label">重要性</div>
+      <div class="status-picker">${PRIS.map(p=>`<button class="status-opt ${newProjectPriority===p.v?'active':''}" style="${newProjectPriority===p.v?`background:${p.css==='urgent'?'var(--urgent-bg)':p.css==='important'?'var(--important-bg)':'var(--normal-bg)'};color:${p.css==='urgent'?'var(--urgent)':p.css==='important'?'var(--important)':'var(--normal)'};border-color:${p.css==='urgent'?'var(--urgent)':p.css==='important'?'var(--important)':'var(--normal)'}`:''}" onclick="window.setNewProjPri('${p.v}')">${p.l}</button>`).join("")}</div>
+      <div class="form-row"><button class="btn-cancel" onclick="window.hideNewProj()">取消</button><button class="btn-ok" onclick="window.doAddProject()">建立</button></div>
     </div>`;
   }
 
   // Empty
-  if (filtered.length === 0) {
-    html += `<div class="empty-state fade-up"><div class="empty-icon">📂</div><p class="empty-text">${statusFilter !== "all" || priorityFilter !== "all" ? "此篩選條件下沒有項目" : "還沒有專案，點擊上方按鈕建立"}</p></div>`;
-  }
+  if(!filtered.length)h+=`<div class="empty fu"><div class="empty-icon">📂</div><p class="empty-text">${searchQuery?"找不到符合的項目":"還沒有專案，點擊上方建立"}</p></div>`;
 
   // Projects
-  filtered.forEach(proj => {
-    const prog = proj.tasks.length ? Math.round(proj.tasks.reduce((s, t) => s + gs(t.status).pct, 0) / proj.tasks.length) : 0;
-    const done = proj.tasks.filter(t => t.status === "done").length;
-    const blocked = proj.tasks.filter(t => t.status === "blocked").length;
-    const isOpen = expandedProjects[proj.id] !== false;
-    const pri = gp(proj.priority);
+  filtered.forEach(proj=>{
+    const prog=projProg(proj.tasks);
+    const done=proj.tasks.filter(t=>t.status==="done").length;
+    const blocked=proj.tasks.filter(t=>t.status==="blocked").length;
+    const isOpen=expandedProjects[proj.id]!==false;
+    const pri=gp(proj.priority);
 
-    html += `<div class="project-card fade-up">`;
-    html += `<div class="project-header">
-      <div class="project-left" onclick="toggleProject('${proj.id}')" style="cursor:pointer;flex:1;display:flex;align-items:center;gap:10px">
-        <span class="project-arrow ${isOpen ? 'open' : ''}">▶</span>
-        <span class="project-name">${esc(proj.name)}</span>
-        <span class="priority-tag ${pri.css}">${pri.label}</span>
+    h+=`<div class="proj-card fu"><div class="proj-head">
+      <div class="proj-toggle" onclick="window.toggleProj('${proj.id}')">
+        <span class="proj-arrow ${isOpen?'open':''}">▶</span>
+        <span class="proj-name">${esc(proj.name)}</span>
+        <span class="pri-tag ${pri.css}">${pri.l}</span>
       </div>
-      <div class="project-meta">
-        ${proj.tasks.length ? `<span class="meta-badge">${done}/${proj.tasks.length}</span>` : ""}
-        ${blocked > 0 ? `<span class="meta-badge warn">✕${blocked}</span>` : ""}
-        ${proj.createdBy === currentUser ? (
-          deleteConfirm === `proj-${proj.id}`
-            ? `<button style="background:var(--urgent-bg);font-size:11px;padding:3px 8px;border-radius:6px;color:var(--urgent);font-weight:500;border:none;cursor:pointer" onclick="event.stopPropagation();window.doDeleteProject('${proj.id}')">確認刪除</button><button style="background:none;font-size:13px;padding:3px 6px;border-radius:6px;color:var(--text-muted);border:none;cursor:pointer" onclick="event.stopPropagation();window.cancelDeleteConfirm()">取消</button>`
-            : `<button style="background:none;font-size:13px;padding:3px 6px;border-radius:6px;color:var(--text-muted);border:none;cursor:pointer" title="刪除專案" onclick="event.stopPropagation();window.confirmDeleteProject('${proj.id}')">🗑</button>`
-        ) : ""}
+      <div class="proj-right">
+        ${proj.tasks.length?`<span class="meta-badge">${done}/${proj.tasks.length}</span>`:''}
+        ${blocked>0?`<span class="meta-badge warn">✕${blocked}</span>`:''}
+        ${proj.createdBy===currentUser?(deleteConfirm===`proj-${proj.id}`?`<button class="danger-sm" onclick="event.stopPropagation();window.doDelProj('${proj.id}')">確認刪除</button><button class="tiny-btn" onclick="event.stopPropagation();window.cancelDel()">取消</button>`:`<button class="tiny-btn" onclick="event.stopPropagation();window.confirmDel('proj-${proj.id}')">🗑</button>`):''}
       </div>
     </div>`;
 
-    if (proj.tasks.length > 0) {
-      html += `<div class="project-progress">
-        <div class="progress-track"><div class="progress-fill" style="width:${prog}%"></div></div>
-        <span class="progress-pct">${prog}%</span>
-      </div>`;
-    }
+    if(proj.tasks.length>0)h+=`<div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:${prog}%"></div></div><span class="prog-pct">${prog}%</span></div>`;
 
-    if (isOpen) {
-      html += `<div class="task-list">`;
-      proj.tasks.forEach(task => {
-        const s = gs(task.status);
-        const isMine = task.assignee === currentUser;
-        const di = dueInfo(task.due, task.status);
-        const isEditing = editingTask && editingTask.projId === proj.id && editingTask.taskId === task.id;
-        const isEditingNote = editingWeeklyNote && editingWeeklyNote.projId === proj.id && editingWeeklyNote.taskId === task.id;
+    if(isOpen){
+      h+=`<div class="task-list">`;
+      proj.tasks.forEach(task=>{
+        const s=gs(task.status);
+        const assignees=getAssignees(task);
+        const isMine=assignees.includes(currentUser);
+        const di=dueInfo(task.due,task.status);
+        const isEdit=editingTask&&editingTask.pid===proj.id&&editingTask.tid===task.id;
+        const isAddNote=addingNoteTo&&addingNoteTo.pid===proj.id&&addingNoteTo.tid===task.id;
+        const notes=Array.isArray(task.notes)?task.notes:[];
 
-        html += `<div class="task-card ${isMine ? 'mine' : ''}" style="border-left-color:${s.color}">`;
-
-        if (isEditing) {
-          html += renderEditForm(proj.id, task);
-        } else {
-          html += `<div class="task-top">
+        h+=`<div class="task-card ${isMine?'mine':''}" style="border-left-color:${s.rc}">`;
+        if(isEdit){
+          h+=renderEditForm(proj.id,task);
+        }else{
+          h+=`<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
             <div style="flex:1">
-              <span class="task-name">${esc(task.text)}</span>
-              ${task.description ? `<div class="task-desc">${esc(task.description)}</div>` : ""}
+              <span class="task-text">${esc(task.text)}</span>
+              ${task.description?`<div class="task-desc">${esc(task.description)}</div>`:''}
               <div class="task-meta">
-                ${task.assignee ? `<span class="assignee-tag">👤 ${esc(task.assignee)}</span>` : ""}
-                ${di ? `<span class="due-tag ${di.cls}">📅 ${di.label}</span>` : ""}
+                ${assignees.map(a=>`<span class="assignee-tag">👤 ${esc(a)}</span>`).join("")}
+                ${di?`<span class="due-tag ${di.cls}">📅 ${di.l}</span>`:''}
               </div>
             </div>
-            ${isMine ? `<div class="task-actions">
-              <button class="tiny-btn" onclick="startEdit('${proj.id}','${task.id}')">✏️</button>
-              ${deleteConfirm === task.id
-                ? `<button class="tiny-btn danger" onclick="doDeleteTask('${proj.id}','${task.id}')">刪除</button><button class="tiny-btn" onclick="cancelDelete()">取消</button>`
-                : `<button class="tiny-btn" onclick="confirmDelete('${task.id}')">🗑</button>`}
-            </div>` : ""}
+            ${isMine?`<div style="display:flex;gap:4px;flex-shrink:0">
+              <button class="tiny-btn" onclick="window.startEdit('${proj.id}','${task.id}')">✏️</button>
+              ${deleteConfirm===task.id?`<button class="danger-sm" onclick="window.doDelTask('${proj.id}','${task.id}')">刪除</button><button class="tiny-btn" onclick="window.cancelDel()">取消</button>`:`<button class="tiny-btn" onclick="window.confirmDel('${task.id}')">🗑</button>`}
+            </div>`:''}
+          </div>
+          <div class="task-bottom">
+            ${isMine?`<button class="status-badge" style="background:${s.bg};color:${s.rc};border:2px solid ${s.rc}30" onclick="window.cycleSt('${proj.id}','${task.id}')"><span style="font-size:11px">${s.i}</span>${s.l}</button>`:`<span class="status-badge" style="background:${s.bg};color:${s.rc};border:2px solid ${s.rc}30;cursor:default"><span style="font-size:11px">${s.i}</span>${s.l}</span>`}
+            <div class="bar-track"><div class="bar-fill" style="width:${s.p}%;background:${s.rc}"></div></div>
+            <span class="pct-label" style="color:${s.rc}">${s.p}%</span>
           </div>`;
 
-          html += `<div class="task-bottom">
-            ${isMine
-              ? `<button class="status-badge" style="background:${s.bg};color:${s.color};border:1.5px solid ${s.color}30" onclick="cycleStatus('${proj.id}','${task.id}')"><span style="font-size:10px">${s.icon}</span>${s.label}</button>`
-              : `<span class="status-badge" style="background:${s.bg};color:${s.color};border:1.5px solid ${s.color}30;cursor:default"><span style="font-size:10px">${s.icon}</span>${s.label}</span>`}
-            <div class="progress-track"><div class="progress-fill" style="width:${s.pct}%;background:${s.color}"></div></div>
-            <span style="font-size:12px;font-weight:600;color:${s.color};min-width:30px;text-align:right">${s.pct}%</span>
-          </div>`;
-
-          // Weekly note
-          if (isMine) {
-            if (isEditingNote) {
-              html += `<div class="weekly-note">
-                <label class="form-label">📝 本週進度備註</label>
-                <textarea class="weekly-note-input" id="weeklyNoteInput" placeholder="本週做了什麼、遇到什麼問題...">${esc(task.weeklyNote || "")}</textarea>
-                <div class="form-actions" style="margin-top:6px">
-                  <button class="btn-cancel" onclick="cancelWeeklyNote()">取消</button>
-                  <button class="btn-ok" onclick="saveWeeklyNote('${proj.id}','${task.id}')">儲存</button>
-                </div>
-              </div>`;
-            } else {
-              html += `<div class="weekly-note" style="cursor:pointer" onclick="startWeeklyNote('${proj.id}','${task.id}')">
-                <span class="weekly-note-label">📝 本週備註 ${task.weeklyNote ? "" : "(點擊新增)"}</span>
-                ${task.weeklyNote ? `<div class="weekly-note-text">${esc(task.weeklyNote)}</div>` : ""}
-              </div>`;
-            }
-          } else if (task.weeklyNote) {
-            html += `<div class="weekly-note">
-              <span class="weekly-note-label">📝 本週備註</span>
-              <div class="weekly-note-text">${esc(task.weeklyNote)}</div>
+          // Notes section
+          h+=`<div class="notes-section">
+            <div class="notes-label" onclick="${isMine?`window.startNote('${proj.id}','${task.id}')`:''}">📝 進度備註 (${notes.length}) ${isMine?'<span style="font-size:12px;color:var(--accent)">+ 新增</span>':''}</div>`;
+          if(notes.length>0){
+            notes.slice().reverse().slice(0,3).forEach(n=>{
+              h+=`<div class="note-item"><div class="note-date">${n.date||''} — ${esc(n.by||'')}</div>${esc(n.text)}</div>`;
+            });
+            if(notes.length>3)h+=`<div style="font-size:12px;color:var(--text3);text-align:center;padding:4px">還有 ${notes.length-3} 筆更早的備註</div>`;
+          }
+          if(isAddNote){
+            h+=`<div style="margin-top:6px;display:flex;flex-direction:column;gap:8px">
+              <textarea class="note-input" id="noteInput" placeholder="這週做了什麼、遇到什麼問題..."></textarea>
+              <div class="form-row"><button class="btn-cancel" onclick="window.cancelNote()">取消</button><button class="btn-ok" onclick="window.saveNote('${proj.id}','${task.id}')">儲存</button></div>
             </div>`;
           }
+          h+=`</div>`;
         }
-        html += `</div>`;
+        h+=`</div>`;
       });
 
-      // Add task button (only for own tasks)
-      if (addingTaskTo === proj.id) {
-        html += renderAddForm(proj.id);
-      } else {
-        html += `<button class="add-task-btn" onclick="startAddTask('${proj.id}')">+ 新增我的工作項目</button>`;
+      // Add task
+      if(addingTaskTo===proj.id){
+        h+=renderAddForm(proj.id);
+      }else{
+        h+=`<button class="add-task-btn" onclick="window.startAddTask('${proj.id}')">+ 新增工作項目</button>`;
       }
-      html += `</div>`;
+      h+=`</div>`;
     }
-    html += `</div>`;
+    h+=`</div>`;
   });
 
-  html += `</div>`;
-  appEl.innerHTML = html;
+  h+=`</div>`;
+  el.innerHTML=h;
 }
 
-function renderIdentity() {
-  const opts = members.length > 0
-    ? members.map(m => `<option value="${esc(m.name)}">${esc(m.name)}</option>`).join("")
-    : `<option value="" disabled>載入組員中...</option>`;
-
-  return `
-    <div class="identity-overlay">
-      <div class="identity-card fade-up">
-        <h2>👋 你好</h2>
-        <p>選擇你的身份，開始更新工作進度</p>
-        <select class="identity-select" id="identitySelect">
-          <option value="">— 請選擇 —</option>
-          ${opts}
-        </select>
-        <button class="identity-enter" id="identityEnter" onclick="window.enterApp()">進入</button>
-      </div>
-    </div>
-  `;
+function renderIdentity(){
+  const opts=members.length>0?members.map(m=>`<option value="${esc(m.name)}">${esc(m.name)}</option>`).join(""):`<option value="" disabled>載入組員中...</option>`;
+  return `<div class="id-overlay"><div class="id-card fu">
+    <h2>👋 你好</h2><p>選擇你的身份，開始更新工作進度</p>
+    <select class="id-select" id="idSelect"><option value="">— 請選擇 —</option>${opts}</select>
+    <button class="id-enter" onclick="window.enterApp()">進入</button>
+  </div></div>`;
 }
 
-function renderEditForm(projId, task) {
-  return `<div class="add-task-form slide-down">
-    <div class="form-group">
-      <label class="form-label">工作項目名稱</label>
-      <input class="form-input" id="editText" value="${esc(task.text)}">
+function renderEditForm(pid,task){
+  const assignees=editData.assignees||[];
+  return `<div style="display:flex;flex-direction:column;gap:12px">
+    <input class="input" id="editText" value="${esc(editData.text)}">
+    <textarea class="textarea" id="editDesc" placeholder="描述說明">${esc(editData.description)}</textarea>
+    <div class="field-row">
+      <div class="field-col"><label class="form-label">預計完成日</label><input type="date" class="input-sm" id="editDue" value="${editData.due||''}"></div>
     </div>
-    <div class="form-group">
-      <label class="form-label">描述說明</label>
-      <textarea class="form-textarea" id="editDesc" placeholder="詳細內容、注意事項、相關連結...">${esc(task.description || "")}</textarea>
+    <div><label class="form-label">負責人（可多選）</label>
+      <div class="assignee-grid">${members.map(m=>`<button class="assignee-opt ${assignees.includes(m.name)?'selected':''}" onclick="window.toggleEditAssignee('${esc(m.name)}')">${esc(m.name)}</button>`).join("")}</div>
     </div>
-    <div class="form-row">
-      <div class="form-col">
-        <label class="form-label">預計完成</label>
-        <input type="date" class="form-input-sm" id="editDue" value="${task.due || ""}">
-      </div>
+    <div><label class="form-label">狀態</label>
+      <div class="status-picker">${STATUS.map(o=>`<button class="status-opt ${editData.status===o.v?'active':''}" style="${editData.status===o.v?`background:${o.bg};color:${o.rc};border-color:${o.rc}`:''}" onclick="window.setEditSt('${o.v}')">${o.i} ${o.l}</button>`).join("")}</div>
     </div>
-    <div class="form-group">
-      <label class="form-label">狀態</label>
-      <div class="status-picker">
-        ${STATUS.map(s => `<button class="status-opt ${task.status === s.value ? 'active' : ''}" style="${task.status === s.value ? `background:${s.bg};color:${s.color};border-color:${s.color}` : ''}" onclick="setEditStatus('${s.value}')">${s.icon} ${s.label}</button>`).join("")}
-      </div>
-    </div>
-    <div class="form-actions">
-      <button class="btn-cancel" onclick="cancelEdit()">取消</button>
-      <button class="btn-ok" onclick="saveEdit('${projId}','${task.id}','${task.status}')">儲存</button>
-    </div>
+    <div class="form-row"><button class="btn-cancel" onclick="window.cancelEdit()">取消</button><button class="btn-ok" onclick="window.saveEdit('${pid}','${task.id}')">儲存</button></div>
   </div>`;
 }
 
-function renderAddForm(projId) {
-  return `<div class="add-task-form slide-down">
-    <div class="form-group">
-      <label class="form-label">工作項目名稱</label>
-      <input class="form-input" id="newTaskText" placeholder="例：設計首頁 wireframe" autofocus>
+function renderAddForm(pid){
+  const assignees=newTask.assignees||[];
+  return `<div class="add-task-form fu">
+    <input class="input" placeholder="工作項目名稱" id="newTaskText" value="${esc(newTask.text)}">
+    <textarea class="textarea" placeholder="描述說明（選填）" id="newTaskDesc">${esc(newTask.description)}</textarea>
+    <div class="field-row">
+      <div class="field-col"><label class="form-label">預計完成日</label><input type="date" class="input-sm" id="newTaskDue" value="${newTask.due}"></div>
     </div>
-    <div class="form-group">
-      <label class="form-label">描述說明（選填）</label>
-      <textarea class="form-textarea" id="newTaskDesc" placeholder="詳細內容、注意事項..."></textarea>
+    <div><label class="form-label">負責人（可多選，預設為自己）</label>
+      <div class="assignee-grid">${members.map(m=>`<button class="assignee-opt ${assignees.includes(m.name)?'selected':''}" onclick="window.toggleNewAssignee('${esc(m.name)}')">${esc(m.name)}</button>`).join("")}</div>
     </div>
-    <div class="form-row">
-      <div class="form-col">
-        <label class="form-label">預計完成</label>
-        <input type="date" class="form-input-sm" id="newTaskDue">
-      </div>
+    <div><label class="form-label">狀態</label>
+      <div class="status-picker">${STATUS.map(o=>`<button class="status-opt ${newTask.status===o.v?'active':''}" style="${newTask.status===o.v?`background:${o.bg};color:${o.rc};border-color:${o.rc}`:''}" onclick="window.setNewTaskSt('${o.v}')">${o.i} ${o.l}</button>`).join("")}</div>
     </div>
-    <div class="form-group">
-      <label class="form-label">狀態</label>
-      <div class="status-picker" id="newStatusPicker">
-        ${STATUS.map(s => `<button class="status-opt ${s.value === 'not_started' ? 'active' : ''}" style="${s.value === 'not_started' ? `background:${s.bg};color:${s.color};border-color:${s.color}` : ''}" onclick="setNewStatus('${s.value}')">${s.icon} ${s.label}</button>`).join("")}
-      </div>
-    </div>
-    <div class="form-actions">
-      <button class="btn-cancel" onclick="cancelAddTask()">完成</button>
-      <button class="btn-ok" onclick="doAddTask('${projId}')">新增</button>
-    </div>
-    <p style="font-size:12px;color:var(--text-muted);text-align:center;margin-top:4px">💡 可連續新增，按「完成」關閉</p>
+    <div class="form-row"><button class="btn-cancel" onclick="window.cancelAddTask()">完成</button><button class="btn-ok" onclick="window.doAddTask('${pid}')">新增</button></div>
+    <p style="font-size:13px;color:var(--text3);text-align:center">💡 可連續新增，按「完成」關閉</p>
   </div>`;
 }
 
-function esc(str) { if (!str) return ""; const d = document.createElement("div"); d.textContent = str; return d.innerHTML; }
+/* ═══ HANDLERS ═══ */
+window.enterApp=function(){const sel=document.getElementById("idSelect");if(!sel||!sel.value){alert("請先選擇你的身份");return}currentUser=sel.value;localStorage.setItem("tracker-user",currentUser);render()};
+window.switchUser=function(){currentUser="";localStorage.removeItem("tracker-user");render()};
+window.toggleProj=id=>{expandedProjects[id]=expandedProjects[id]===false;render()};
+window.setSt=v=>{statusFilter=statusFilter===v?"all":v;render()};
+window.setPri=v=>{priorityFilter=priorityFilter===v?"all":v;render()};
+window.setView=v=>{viewMode=v;render()};
+window.setSearch=v=>{searchQuery=v;render()};
+window.confirmDel=id=>{deleteConfirm=id;render()};
+window.cancelDel=()=>{deleteConfirm=null;render()};
 
-/* ════════════════════════════════
-   UI HANDLERS
-   ════════════════════════════════ */
-let newTaskStatus = "not_started";
-let editTaskStatus = "";
+// Project
+window.showNewProjForm=()=>{showNewProject=true;render();setTimeout(()=>document.getElementById("newProjName")?.focus(),50)};
+window.hideNewProj=()=>{showNewProject=false;render()};
+window.setNewProjPri=v=>{newProjectPriority=v;render()};
+window.doAddProject=async()=>{const name=document.getElementById("newProjName")?.value?.trim();if(!name)return toast("請輸入名稱");await fbAddProject(name,newProjectPriority);showNewProject=false;newProjectPriority="normal"};
+window.doDelProj=async pid=>{await fbDeleteProject(pid);deleteConfirm=null};
 
-window.showNewProjectForm = function() { showNewProject = true; render(); setTimeout(() => document.getElementById("newProjName")?.focus(), 50); };
-window.hideNewProject = function() { showNewProject = false; newProjectName = ""; render(); };
-window.setNewProjPri = function(v) { newProjectPriority = v; render(); };
-window.doAddProject = async function() {
-  const name = document.getElementById("newProjName")?.value?.trim();
-  if (!name) { toast("請輸入專案名稱"); return; }
-  await fbAddProject(name, newProjectPriority);
-  showNewProject = false; newProjectName = ""; newProjectPriority = "normal";
-};
-
-window.enterApp = function() {
-  const sel = document.getElementById("identitySelect");
-  if (!sel || !sel.value) { alert("請先選擇你的身份"); return; }
-  currentUser = sel.value;
-  localStorage.setItem("tracker-user", currentUser);
+// Task
+window.startAddTask=pid=>{addingTaskTo=pid;newTask={text:"",description:"",assignees:[currentUser],due:"",status:"not_started"};render();setTimeout(()=>document.getElementById("newTaskText")?.focus(),50)};
+window.cancelAddTask=()=>{addingTaskTo=null;render()};
+window.setNewTaskSt=v=>{newTask.status=v;render()};
+window.toggleNewAssignee=name=>{
+  const a=newTask.assignees||[];
+  newTask.assignees=a.includes(name)?a.filter(x=>x!==name):[...a,name];
   render();
 };
+window.doAddTask=async pid=>{
+  newTask.text=document.getElementById("newTaskText")?.value||"";
+  newTask.description=document.getElementById("newTaskDesc")?.value||"";
+  newTask.due=document.getElementById("newTaskDue")?.value||"";
+  if(!newTask.text.trim())return toast("請輸入名稱");
+  await fbAddTask(pid,{text:newTask.text.trim(),description:newTask.description.trim(),assignees:newTask.assignees,due:newTask.due,status:newTask.status});
+  newTask={text:"",description:"",assignees:[currentUser],due:"",status:"not_started"};
+  render();setTimeout(()=>document.getElementById("newTaskText")?.focus(),50);
+};
 
-window.switchUser = function() {
-  currentUser = "";
-  localStorage.removeItem("tracker-user");
+// Edit
+window.startEdit=(pid,tid)=>{
+  const task=projects.find(p=>p.id===pid)?.tasks?.find(t=>t.id===tid);if(!task)return;
+  editingTask={pid,tid};
+  editData={text:task.text,description:task.description||"",assignees:getAssignees(task),due:task.due||"",status:task.status};
   render();
 };
-
-window.toggleProject = function(id) {
-  expandedProjects[id] = expandedProjects[id] === false ? true : false;
+window.cancelEdit=()=>{editingTask=null;render()};
+window.setEditSt=v=>{editData.status=v;render()};
+window.toggleEditAssignee=name=>{
+  const a=editData.assignees||[];
+  editData.assignees=a.includes(name)?a.filter(x=>x!==name):[...a,name];
   render();
 };
-
-window.setStatusFilter = function(v) { statusFilter = v; render(); };
-window.setPriorityFilter = function(v) { priorityFilter = v; render(); };
-window.setViewMode = function(v) { viewMode = v; render(); };
-
-window.startAddTask = function(projId) { addingTaskTo = projId; newTaskStatus = "not_started"; render(); };
-window.cancelAddTask = function() { addingTaskTo = null; render(); };
-
-window.setNewStatus = function(v) {
-  newTaskStatus = v;
-  document.querySelectorAll("#newStatusPicker .status-opt").forEach(btn => {
-    const sv = btn.textContent.includes("尚未") ? "not_started" : btn.textContent.includes("進行") ? "in_progress" : btn.textContent.includes("已完") ? "done" : "blocked";
-    const s = gs(sv);
-    if (sv === v) { btn.classList.add("active"); btn.style.background = s.bg; btn.style.color = s.color; btn.style.borderColor = s.color; }
-    else { btn.classList.remove("active"); btn.style.background = ""; btn.style.color = ""; btn.style.borderColor = ""; }
-  });
-};
-
-window.doAddTask = async function(projId) {
-  const text = document.getElementById("newTaskText")?.value?.trim();
-  if (!text) return toast("請輸入工作項目名稱");
-  const desc = document.getElementById("newTaskDesc")?.value?.trim() || "";
-  const due = document.getElementById("newTaskDue")?.value || "";
-  await fbAddTask(projId, { text, description: desc, assignee: currentUser, due, status: newTaskStatus, weeklyNote: "" });
-  document.getElementById("newTaskText").value = "";
-  document.getElementById("newTaskDesc").value = "";
-  document.getElementById("newTaskDue").value = "";
-  newTaskStatus = "not_started";
-};
-
-window.startEdit = function(projId, taskId) {
-  const proj = projects.find(p => p.id === projId);
-  const task = proj?.tasks.find(t => t.id === taskId);
-  if (!task) return;
-  editingTask = { projId, taskId };
-  editTaskStatus = task.status;
-  render();
-};
-
-window.cancelEdit = function() { editingTask = null; render(); };
-
-window.setEditStatus = function(v) { editTaskStatus = v; render(); };
-
-window.saveEdit = async function(projId, taskId, oldStatus) {
-  const text = document.getElementById("editText")?.value?.trim();
-  if (!text) return toast("名稱不能為空");
-  const desc = document.getElementById("editDesc")?.value?.trim() || "";
-  const due = document.getElementById("editDue")?.value || "";
-  const task = projects.find(p => p.id === projId)?.tasks.find(t => t.id === taskId);
-  const updates = { text, description: desc, due, status: editTaskStatus };
-  if (oldStatus !== editTaskStatus && task) {
-    const history = task.statusHistory || [];
-    history.push({ from: oldStatus, to: editTaskStatus, at: new Date().toISOString(), by: currentUser });
-    updates.statusHistory = history;
+window.saveEdit=async(pid,tid)=>{
+  editData.text=document.getElementById("editText")?.value||editData.text;
+  editData.description=document.getElementById("editDesc")?.value||"";
+  editData.due=document.getElementById("editDue")?.value||"";
+  if(!editData.text.trim())return toast("名稱不能為空");
+  const task=projects.find(p=>p.id===pid)?.tasks?.find(t=>t.id===tid);
+  const updates={text:editData.text.trim(),description:editData.description,assignees:editData.assignees,due:editData.due,status:editData.status};
+  if(task&&editData.status!==task.status){
+    updates.statusHistory=[...(task.statusHistory||[]),{from:task.status,to:editData.status,at:new Date().toISOString(),by:currentUser}];
   }
-  await fbUpdateTask(projId, taskId, updates);
-  editingTask = null;
-  toast("已更新");
-  render();
+  await fbUpdateTask(pid,tid,updates);editingTask=null;toast("已更新");render();
 };
+window.doDelTask=async(pid,tid)=>{await fbDeleteTask(pid,tid);deleteConfirm=null};
+window.cycleSt=async(pid,tid)=>{const task=projects.find(p=>p.id===pid)?.tasks?.find(t=>t.id===tid);if(task&&isMyTask(task))await fbCycleStatus(pid,task)};
 
-window.confirmDelete = function(id) { deleteConfirm = id; render(); };
-window.cancelDelete = function() { deleteConfirm = null; render(); };
-window.doDeleteTask = async function(projId, taskId) { await fbDeleteTask(projId, taskId); deleteConfirm = null; };
-
-window.confirmDeleteProject = function(id) { deleteConfirm = `proj-${id}`; render(); };
-window.cancelDeleteConfirm = function() { deleteConfirm = null; render(); };
-window.doDeleteProject = async function(projId) { await fbDeleteProject(projId); deleteConfirm = null; };
-
-window.cycleStatus = async function(projId, taskId) {
-  const proj = projects.find(p => p.id === projId);
-  const task = proj?.tasks.find(t => t.id === taskId);
-  if (!task || task.assignee !== currentUser) return;
-  await fbCycleStatus(projId, task);
+// Notes
+window.startNote=(pid,tid)=>{addingNoteTo={pid,tid};render();setTimeout(()=>document.getElementById("noteInput")?.focus(),50)};
+window.cancelNote=()=>{addingNoteTo=null;render()};
+window.saveNote=async(pid,tid)=>{
+  const text=document.getElementById("noteInput")?.value?.trim();if(!text)return toast("請輸入備註");
+  const task=projects.find(p=>p.id===pid)?.tasks?.find(t=>t.id===tid);
+  await fbAddNote(pid,tid,text,task?.notes||[]);addingNoteTo=null;
 };
-
-window.startWeeklyNote = function(projId, taskId) {
-  editingWeeklyNote = { projId, taskId };
-  render();
-  setTimeout(() => document.getElementById("weeklyNoteInput")?.focus(), 50);
-};
-window.cancelWeeklyNote = function() { editingWeeklyNote = null; render(); };
-window.saveWeeklyNote = async function(projId, taskId) {
-  const note = document.getElementById("weeklyNoteInput")?.value?.trim() || "";
-  await fbUpdateTask(projId, taskId, { weeklyNote: note, weeklyNoteUpdatedAt: new Date().toISOString() });
-  editingWeeklyNote = null;
-  toast("備註已儲存");
-};
-
-/* ════════════════════════════════
-   INIT
-   ════════════════════════════════ */
-initListeners();
-setTimeout(() => {
-  document.getElementById("loading").style.display = "none";
-  if (!currentUser) render();
-}, 2000);
-
 </script>
 </body>
 </html>

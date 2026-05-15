@@ -277,7 +277,21 @@ async function fbAddNote(pid,tid,text,existingNotes){
 }
 
 /* ═══ RENDER ═══ */
+function syncAllInputs(){
+  // New project
+  const np=document.getElementById("newProjName");if(np)newProjectName=np.value;
+  // New task
+  const nt=document.getElementById("newTaskText"),nd=document.getElementById("newTaskDesc"),ndu=document.getElementById("newTaskDue");
+  if(nt)newTask.text=nt.value;if(nd)newTask.description=nd.value;if(ndu)newTask.due=ndu.value;
+  // Edit task
+  const et=document.getElementById("editText"),ed=document.getElementById("editDesc"),edu=document.getElementById("editDue");
+  if(et)editData.text=et.value;if(ed)editData.description=ed.value;if(edu)editData.due=edu.value;
+  // Note
+  const ni=document.getElementById("noteInput");if(ni)window._pendingNote=ni.value;
+  // Search - don't sync, it uses oninput already
+}
 function render(){
+  syncAllInputs();
   const el=document.getElementById("app");
   if(!currentUser){el.innerHTML=renderIdentity();return}
   const loadingEl=document.getElementById("loading");if(loadingEl)loadingEl.style.display="none";
@@ -431,7 +445,7 @@ function render(){
           }
           if(isAddNote){
             h+=`<div style="margin-top:6px;display:flex;flex-direction:column;gap:8px">
-              <textarea class="note-input" id="noteInput" placeholder="這週做了什麼、遇到什麼問題..."></textarea>
+              <textarea class="note-input" id="noteInput" placeholder="這週做了什麼、遇到什麼問題...">${esc(window._pendingNote||"")}</textarea>
               <div class="form-row"><button class="btn-cancel" onclick="window.cancelNote()">取消</button><button class="btn-ok" onclick="window.saveNote('${proj.id}','${task.id}')">儲存</button></div>
             </div>`;
           }
@@ -453,6 +467,13 @@ function render(){
 
   h+=`</div>`;
   el.innerHTML=h;
+  // Restore focus to active input
+  requestAnimationFrame(()=>{
+    const active=document.activeElement;
+    if(addingTaskTo){const el=document.getElementById("newTaskText");if(el&&(!active||active===document.body)){el.focus();el.setSelectionRange(el.value.length,el.value.length)}}
+    if(editingTask){const el=document.getElementById("editText");if(el&&(!active||active===document.body)){el.focus();el.setSelectionRange(el.value.length,el.value.length)}}
+    if(addingNoteTo){const el=document.getElementById("noteInput");if(el&&(!active||active===document.body)){el.focus();el.setSelectionRange(el.value.length,el.value.length)}}
+  });
 }
 
 function renderIdentity(){
@@ -578,12 +599,12 @@ window.doDelTask=async(pid,tid)=>{await fbDeleteTask(pid,tid);deleteConfirm=null
 window.cycleSt=async(pid,tid)=>{const task=projects.find(p=>p.id===pid)?.tasks?.find(t=>t.id===tid);if(task&&isMyTask(task))await fbCycleStatus(pid,task)};
 
 // Notes
-window.startNote=(pid,tid)=>{addingNoteTo={pid,tid};render();setTimeout(()=>document.getElementById("noteInput")?.focus(),50)};
-window.cancelNote=()=>{addingNoteTo=null;render()};
+window.startNote=(pid,tid)=>{addingNoteTo={pid,tid};window._pendingNote="";render();setTimeout(()=>document.getElementById("noteInput")?.focus(),50)};
+window.cancelNote=()=>{addingNoteTo=null;window._pendingNote="";render()};
 window.saveNote=async(pid,tid)=>{
   const text=document.getElementById("noteInput")?.value?.trim();if(!text)return toast("請輸入備註");
   const task=projects.find(p=>p.id===pid)?.tasks?.find(t=>t.id===tid);
-  await fbAddNote(pid,tid,text,task?.notes||[]);addingNoteTo=null;
+  await fbAddNote(pid,tid,text,task?.notes||[]);addingNoteTo=null;window._pendingNote="";
 };
 </script>
 </body>

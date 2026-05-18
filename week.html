@@ -22,7 +22,6 @@ body{font-family:'Noto Sans TC','Space Grotesk',sans-serif;background:var(--bg);
 button{cursor:pointer;border:none;font-family:inherit;font-size:14px}
 input,select,textarea{font-family:inherit;font-size:14px}
 
-/* Topbar */
 .topbar{background:var(--surface);border-bottom:1px solid var(--border);padding:16px 24px;display:flex;justify-content:space-between;align-items:center;position:sticky;top:0;z-index:50}
 .topbar-left{display:flex;align-items:center;gap:14px}
 .topbar-logo{width:40px;height:40px;border-radius:12px;background:var(--accent);color:#fff;display:flex;align-items:center;justify-content:center;font-size:18px;font-weight:700}
@@ -30,46 +29,47 @@ input,select,textarea{font-family:inherit;font-size:14px}
 .topbar-user{display:flex;align-items:center;gap:10px}
 .topbar-avatar{width:34px;height:34px;border-radius:50%;background:var(--accent-light);color:var(--accent);display:flex;align-items:center;justify-content:center;font-size:15px;font-weight:600}
 .topbar-name{font-size:14px;color:var(--text2);font-weight:500}
-.topbar-switch{background:none;border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:13px;color:var(--text3)}
-.topbar-switch:hover{border-color:var(--text3);color:var(--text2)}
+.topbar-btn{background:none;border:1px solid var(--border);border-radius:8px;padding:6px 14px;font-size:13px;color:var(--text3)}
+.topbar-btn:hover{border-color:var(--text3);color:var(--text2)}
 .container{max-width:740px;margin:0 auto;padding:24px 18px 100px}
 
-/* Identity */
-.id-overlay{position:fixed;inset:0;background:rgba(26,24,22,.4);backdrop-filter:blur(8px);z-index:100;display:flex;align-items:center;justify-content:center}
-.id-card{background:var(--surface);border-radius:24px;padding:48px 36px;max-width:420px;width:92%;text-align:center;box-shadow:0 20px 60px rgba(26,24,22,.15)}
-.id-card h2{font-size:26px;font-weight:700;margin-bottom:10px}
-.id-card p{color:var(--text2);font-size:15px;margin-bottom:28px}
-.id-select{width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:var(--r);font-size:16px;background:var(--bg);appearance:none;cursor:pointer;outline:none}
-.id-select:focus{border-color:var(--accent)}
-.id-enter{width:100%;margin-top:16px;padding:16px;border-radius:var(--r);background:var(--accent);color:#fff;font-size:16px;font-weight:600;transition:background .2s}
-.id-enter:hover{background:var(--accent-hover)}
+/* Auth screens */
+.auth-overlay{position:fixed;inset:0;background:rgba(26,24,22,.4);backdrop-filter:blur(8px);z-index:100;display:flex;align-items:center;justify-content:center}
+.auth-card{background:var(--surface);border-radius:24px;padding:44px 36px;max-width:420px;width:92%;text-align:center;box-shadow:0 20px 60px rgba(26,24,22,.15)}
+.auth-card h2{font-size:24px;font-weight:700;margin-bottom:8px}
+.auth-card p{color:var(--text2);font-size:14px;margin-bottom:24px;line-height:1.6}
+.auth-select{width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:var(--r);font-size:16px;background:var(--bg);appearance:none;cursor:pointer;outline:none;margin-bottom:12px}
+.auth-select:focus{border-color:var(--accent)}
+.auth-input{width:100%;padding:14px 18px;border:2px solid var(--border);border-radius:var(--r);font-size:16px;outline:none;background:var(--bg);margin-bottom:12px}
+.auth-input:focus{border-color:var(--accent)}
+.auth-btn{width:100%;padding:16px;border-radius:var(--r);background:var(--accent);color:#fff;font-size:16px;font-weight:600;margin-top:4px;transition:background .2s}
+.auth-btn:hover{background:var(--accent-hover)}
+.auth-btn:disabled{opacity:.5;cursor:not-allowed}
+.auth-link{background:none;color:var(--accent);font-size:13px;margin-top:14px;text-decoration:underline;display:inline-block}
+.auth-error{color:var(--urgent);font-size:13px;margin-bottom:10px;font-weight:500}
+.auth-success{color:var(--done);font-size:13px;margin-bottom:10px;font-weight:500}
 
 /* Search */
 .search-bar{margin-bottom:16px}
-.search-input{width:100%;padding:13px 18px 13px 44px;border:2px solid var(--border);border-radius:var(--r);font-size:15px;outline:none;background:var(--surface);transition:border .2s}
+.search-input{width:100%;padding:13px 18px 13px 44px;border:2px solid var(--border);border-radius:var(--r);font-size:15px;outline:none;background:var(--surface)}
 .search-input:focus{border-color:var(--accent)}
 .search-wrap{position:relative}
 .search-icon{position:absolute;left:16px;top:50%;transform:translateY(-50%);font-size:16px;color:var(--text3);pointer-events:none}
 
-/* View Toggle */
 .view-toggle{display:flex;gap:4px;margin-bottom:14px;background:#ede9e4;border-radius:12px;padding:4px}
-.view-btn{flex:1;padding:11px;border-radius:10px;font-size:14px;font-weight:500;background:transparent;color:var(--text2);text-align:center;transition:all .15s}
+.view-btn{flex:1;padding:11px;border-radius:10px;font-size:14px;font-weight:500;background:transparent;color:var(--text2);text-align:center}
 .view-btn.on{background:#fff;color:var(--text);box-shadow:0 2px 6px rgba(0,0,0,.06);font-weight:600}
-
-/* Filter */
 .filter-row{display:flex;gap:8px;margin-bottom:14px;flex-wrap:wrap}
-.chip{padding:7px 16px;border-radius:22px;font-size:13px;font-weight:500;background:var(--surface);color:var(--text2);border:2px solid var(--border);transition:all .15s}
+.chip{padding:7px 16px;border-radius:22px;font-size:13px;font-weight:500;background:var(--surface);color:var(--text2);border:2px solid var(--border)}
 .chip:hover{border-color:var(--text3)}
 .chip.on{background:var(--text);color:#fff;border-color:var(--text)}
 
-/* Due Alert */
 .due-alert{background:linear-gradient(135deg,#fef8ec,#fdf0ed);border:2px solid #fde6a8;border-radius:var(--rl);padding:18px 20px;margin-bottom:18px}
-.due-alert-title{font-size:15px;font-weight:600;color:var(--important);margin-bottom:10px;display:flex;align-items:center;gap:6px}
+.due-alert-title{font-size:15px;font-weight:600;color:var(--important);margin-bottom:10px}
 .due-alert-item{font-size:14px;color:var(--text);padding:6px 0;display:flex;align-items:center;gap:8px;border-bottom:1px solid #f5e8d0}
 .due-alert-item:last-child{border:none}
 .due-alert-proj{font-size:12px;color:var(--text3);background:var(--bg);padding:2px 8px;border-radius:6px}
 
-/* Project Card */
 .proj-card{background:var(--surface);border:2px solid var(--border);border-radius:var(--rl);margin-bottom:18px;overflow:hidden;transition:box-shadow .2s}
 .proj-card:hover{box-shadow:0 4px 20px rgba(0,0,0,.05)}
 .proj-head{display:flex;justify-content:space-between;align-items:center;padding:18px 20px;gap:10px}
@@ -88,13 +88,11 @@ input,select,textarea{font-family:inherit;font-size:14px}
 .tiny-btn:hover{background:var(--border-light)}
 .danger-sm{background:var(--urgent-bg);font-size:13px;padding:4px 12px;border-radius:8px;color:var(--urgent);font-weight:500}
 
-/* Progress */
 .prog-wrap{display:flex;align-items:center;gap:12px;padding:0 20px 16px}
 .prog-track{flex:1;height:10px;background:var(--border-light);border-radius:6px;overflow:hidden}
 .prog-fill{height:100%;border-radius:6px;background:linear-gradient(90deg,var(--accent),#3a7432);transition:width .4s ease}
 .prog-pct{font-size:14px;font-weight:700;color:var(--accent);min-width:42px;text-align:right}
 
-/* Task */
 .task-list{padding:0 14px 14px}
 .task-card{background:var(--bg);border-radius:var(--r);padding:16px 18px;margin-bottom:8px;border-left:4px solid var(--border);display:flex;flex-direction:column;gap:12px;transition:all .2s}
 .task-card:hover{box-shadow:0 3px 12px rgba(0,0,0,.04);transform:translateY(-1px)}
@@ -109,13 +107,12 @@ input,select,textarea{font-family:inherit;font-size:14px}
 .due-tag.ok{color:var(--text3);background:var(--bg)}
 .due-tag.done{color:var(--done);background:var(--done-bg)}
 .task-bottom{display:flex;align-items:center;gap:12px;margin-top:4px}
-.status-badge{padding:5px 14px;border-radius:20px;font-size:13px;font-weight:500;display:inline-flex;align-items:center;gap:5px;cursor:pointer;transition:all .15s}
+.status-badge{padding:5px 14px;border-radius:20px;font-size:13px;font-weight:500;display:inline-flex;align-items:center;gap:5px;cursor:pointer}
 .status-badge:hover{filter:brightness(.93)}
 .bar-track{flex:1;height:8px;background:var(--border-light);border-radius:5px;overflow:hidden}
 .bar-fill{height:100%;border-radius:5px;transition:width .4s ease}
 .pct-label{font-size:13px;font-weight:700;min-width:34px;text-align:right}
 
-/* Notes */
 .notes-section{margin-top:8px}
 .notes-label{font-size:13px;color:var(--text3);font-weight:500;margin-bottom:6px;display:flex;align-items:center;gap:6px;cursor:pointer}
 .note-item{font-size:13px;color:var(--text2);background:var(--surface);padding:8px 12px;border-radius:8px;border:1px solid var(--border-light);margin-bottom:4px;line-height:1.6}
@@ -123,7 +120,6 @@ input,select,textarea{font-family:inherit;font-size:14px}
 .note-input{width:100%;padding:10px 14px;border:2px solid var(--border);border-radius:var(--r);font-size:14px;outline:none;resize:vertical;min-height:44px;background:var(--surface)}
 .note-input:focus{border-color:var(--accent)}
 
-/* Forms */
 .form-card{background:var(--surface);border-radius:var(--rl);padding:24px;margin-bottom:18px;border:2px solid var(--border);display:flex;flex-direction:column;gap:14px}
 .form-title{font-size:16px;font-weight:600}
 .input{padding:13px 16px;border-radius:var(--r);border:2px solid var(--border);font-size:15px;outline:none;background:var(--bg);width:100%}
@@ -136,41 +132,28 @@ input,select,textarea{font-family:inherit;font-size:14px}
 .field-row{display:flex;gap:12px}
 .field-col{flex:1;display:flex;flex-direction:column;gap:4px}
 .status-picker{display:flex;gap:8px;flex-wrap:wrap}
-.status-opt{padding:7px 14px;border-radius:10px;font-size:13px;background:var(--bg);color:var(--text2);border:2px solid var(--border);transition:all .15s}
+.status-opt{padding:7px 14px;border-radius:10px;font-size:13px;background:var(--bg);color:var(--text2);border:2px solid var(--border)}
 .status-opt.active{font-weight:600}
 .form-row{display:flex;gap:10px;justify-content:flex-end}
 .btn-cancel{padding:10px 22px;border-radius:var(--r);background:var(--bg);color:var(--text2);font-size:14px;font-weight:500}
 .btn-cancel:hover{background:var(--border)}
 .btn-ok{padding:10px 22px;border-radius:var(--r);background:var(--accent);color:#fff;font-size:14px;font-weight:500}
 .btn-ok:hover{background:var(--accent-hover)}
-
-/* Assignee multi-select */
 .assignee-grid{display:flex;flex-wrap:wrap;gap:6px}
-.assignee-opt{padding:6px 12px;border-radius:8px;font-size:13px;background:var(--bg);color:var(--text2);border:2px solid var(--border);transition:all .15s}
+.assignee-opt{padding:6px 12px;border-radius:8px;font-size:13px;background:var(--bg);color:var(--text2);border:2px solid var(--border)}
 .assignee-opt.selected{background:var(--accent-light);color:var(--accent);border-color:var(--accent);font-weight:600}
-
-/* Add task */
-.add-task-btn{width:100%;padding:14px;border-radius:var(--r);background:transparent;border:2px dashed var(--border);color:var(--text3);font-size:14px;font-weight:500;margin-top:6px;transition:all .2s}
+.add-task-btn{width:100%;padding:14px;border-radius:var(--r);background:transparent;border:2px dashed var(--border);color:var(--text3);font-size:14px;font-weight:500;margin-top:6px}
 .add-task-btn:hover{border-color:var(--text3);color:var(--text2)}
 .add-task-form{background:var(--surface);border-radius:var(--r);padding:18px;margin-top:8px;border:2px solid var(--border);display:flex;flex-direction:column;gap:12px}
-
-/* New project */
 .new-proj-btn{width:100%;padding:16px;border-radius:var(--rl);background:var(--surface);border:2px dashed #d1cdc6;color:var(--text2);font-size:15px;font-weight:500;margin-bottom:18px;display:flex;align-items:center;justify-content:center;gap:8px}
 .new-proj-btn:hover{border-color:var(--text3);color:var(--text)}
-
-/* Empty */
 .empty{text-align:center;padding:60px 24px}
 .empty-icon{font-size:48px;margin-bottom:14px}
 .empty-text{font-size:15px;color:var(--text3)}
-
-/* Toast */
 .toast{position:fixed;bottom:28px;left:50%;transform:translateX(-50%);background:var(--text);color:#fff;padding:12px 24px;border-radius:12px;font-size:14px;font-weight:500;z-index:200;box-shadow:0 8px 24px rgba(0,0,0,.15);opacity:0;transition:opacity .3s;pointer-events:none}
 .toast.show{opacity:1}
-
-/* Loading */
 .loading{display:flex;flex-direction:column;align-items:center;justify-content:center;height:60vh;gap:14px}
 .spinner{width:32px;height:32px;border:3px solid var(--border);border-top-color:var(--accent);border-radius:50%;animation:spin .8s linear infinite}
-
 @media(max-width:480px){.field-row{flex-direction:column;gap:10px}.topbar{padding:14px 16px}.container{padding:20px 14px 80px}.proj-head{padding:14px 16px}.task-card{padding:14px 16px}}
 </style>
 </head>
@@ -180,7 +163,7 @@ input,select,textarea{font-family:inherit;font-size:14px}
 
 <script type="module">
 import { initializeApp } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-app.js";
-import { getFirestore, collection, doc, getDocs, addDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
+import { getFirestore, collection, doc, getDoc, getDocs, setDoc, addDoc, updateDoc, deleteDoc, onSnapshot, serverTimestamp, query, orderBy } from "https://www.gstatic.com/firebasejs/12.13.0/firebase-firestore.js";
 
 const app = initializeApp({
   apiKey:"AIzaSyA31PYM4v853tOEqi7xqwyGigEncDx64mM",authDomain:"weekreport-a9e81.firebaseapp.com",
@@ -190,23 +173,25 @@ const app = initializeApp({
 const db = getFirestore(app);
 
 /* ═══ STATE ═══ */
-let currentUser = localStorage.getItem("tracker-user") || "";
-let projects = [], members = [];
-let expandedProjects = {}, statusFilter = "all", priorityFilter = "all", viewMode = "all";
-let showNewProject = false, newProjectName = "", newProjectPriority = "normal";
-let addingTaskTo = null, newTask = { text:"", description:"", assignees:[], due:"", status:"not_started" };
-let editingTask = null, editData = {};
-let deleteConfirm = null, addingNoteTo = null, searchQuery = "";
+let currentUser="", isLoggedIn=false;
+let authScreen="select"; // select | password | setup | forgot
+let authError="", authSuccess="";
+let selectedUser="", passwordInput="", passwordConfirm="", resetCode="";
+let projects=[], members=[];
+let expandedProjects={}, statusFilter="all", priorityFilter="all", viewMode="all";
+let showNewProject=false, newProjectName="", newProjectPriority="normal";
+let addingTaskTo=null, newTask={text:"",description:"",assignees:[],due:"",status:"not_started"};
+let editingTask=null, editData={};
+let deleteConfirm=null, addingNoteTo=null, searchQuery="";
+window._pendingNote="";
 
-const STATUS = [
+const STATUS=[
   {v:"not_started",l:"尚未開始",i:"○",c:"var(--ns)",bg:"var(--ns-bg)",rc:"#94a3b8",p:0},
   {v:"in_progress",l:"進行中",i:"◐",c:"var(--ip)",bg:"var(--ip-bg)",rc:"#d97706",p:50},
   {v:"done",l:"已完成",i:"●",c:"var(--done)",bg:"var(--done-bg)",rc:"#16a34a",p:100},
   {v:"blocked",l:"卡關",i:"✕",c:"var(--block)",bg:"var(--block-bg)",rc:"#dc2626",p:25},
 ];
-const PRIS = [
-  {v:"urgent",l:"🔴 緊急",css:"urgent"},{v:"important",l:"🟡 重要",css:"important"},{v:"normal",l:"🔵 一般",css:"normal"}
-];
+const PRIS=[{v:"urgent",l:"🔴 緊急",css:"urgent"},{v:"important",l:"🟡 重要",css:"important"},{v:"normal",l:"🔵 一般",css:"normal"}];
 const gs=v=>STATUS.find(s=>s.v===v)||STATUS[0];
 const gp=v=>PRIS.find(p=>p.v===v)||PRIS[2];
 
@@ -220,12 +205,26 @@ function dueInfo(d,st){
   if(diff<=3)return{l:`${diff} 天後到期`,cls:"soon"};
   return{l:`${diff} 天後`,cls:"ok"};
 }
-function getAssignees(task){ return Array.isArray(task.assignees) ? task.assignees : (task.assignee ? [task.assignee] : []); }
-function isMyTask(task){ return getAssignees(task).includes(currentUser); }
-function projProg(tasks){ return tasks.length?Math.round(tasks.reduce((s,t)=>s+gs(t.status).p,0)/tasks.length):0; }
+function getAssignees(t){return Array.isArray(t.assignees)?t.assignees:(t.assignee?[t.assignee]:[])}
+function isMyTask(t){return getAssignees(t).includes(currentUser)}
+function projProg(tasks){return tasks.length?Math.round(tasks.reduce((s,t)=>s+gs(t.status).p,0)/tasks.length):0}
 function esc(s){if(!s)return"";const d=document.createElement("div");d.textContent=s;return d.innerHTML}
 function toast(m){const e=document.getElementById("toast");e.textContent=m;e.classList.add("show");setTimeout(()=>e.classList.remove("show"),2000)}
-function thisWeekMonday(){const d=new Date();const day=d.getDay();const diff=d.getDate()-day+(day===0?-6:1);return new Date(d.setDate(diff)).toISOString().slice(0,10)}
+
+/* ═══ AUTH ═══ */
+async function checkPassword(name, pw){
+  try{
+    const snap=await getDoc(doc(db,"passwords",name));
+    if(!snap.exists())return"no_password";
+    return snap.data().password===pw?"ok":"wrong";
+  }catch(e){return"error"}
+}
+async function setPassword(name, pw){
+  try{await setDoc(doc(db,"passwords",name),{password:pw,updatedAt:new Date().toISOString()});return true}catch(e){return false}
+}
+async function resetPassword(name){
+  try{await deleteDoc(doc(db,"passwords",name));return true}catch(e){return false}
+}
 
 /* ═══ FIREBASE LISTENERS ═══ */
 onSnapshot(collection(db,"members"),snap=>{
@@ -247,284 +246,199 @@ onSnapshot(query(collection(db,"projects"),orderBy("createdAt","desc")),snap=>{
 setTimeout(()=>render(),2500);
 
 /* ═══ FIREBASE OPS ═══ */
-async function fbAddProject(name,priority){
-  try{await addDoc(collection(db,"projects"),{name,priority,createdBy:currentUser,createdAt:serverTimestamp()});toast("已建立專案")}catch(e){toast("建立失敗："+e.message)}
-}
-async function fbDeleteProject(pid){
-  try{const ts=await getDocs(collection(db,"projects",pid,"tasks"));for(const t of ts.docs)await deleteDoc(doc(db,"projects",pid,"tasks",t.id));await deleteDoc(doc(db,"projects",pid));toast("已刪除專案")}catch(e){toast("刪除失敗："+e.message)}
-}
-async function fbAddTask(pid,task){
-  try{await addDoc(collection(db,"projects",pid,"tasks"),{
-    ...task,notes:[],statusHistory:[{from:null,to:task.status,at:new Date().toISOString(),by:currentUser}],
-    createdAt:serverTimestamp(),updatedAt:serverTimestamp()
-  });toast("已新增")}catch(e){toast("新增失敗："+e.message)}
-}
-async function fbUpdateTask(pid,tid,updates){
-  try{await updateDoc(doc(db,"projects",pid,"tasks",tid),{...updates,updatedAt:serverTimestamp()})}catch(e){toast("更新失敗："+e.message)}
-}
-async function fbDeleteTask(pid,tid){
-  try{await deleteDoc(doc(db,"projects",pid,"tasks",tid));toast("已刪除")}catch(e){toast("刪除失敗："+e.message)}
-}
-async function fbCycleStatus(pid,task){
-  const order=["not_started","in_progress","done","blocked"];
-  const ns=order[(order.indexOf(task.status)+1)%4];
-  const h=[...(task.statusHistory||[]),{from:task.status,to:ns,at:new Date().toISOString(),by:currentUser}];
-  await fbUpdateTask(pid,task.id,{status:ns,statusHistory:h});
-}
-async function fbAddNote(pid,tid,text,existingNotes){
-  const notes=[...(existingNotes||[]),{text,date:new Date().toISOString().slice(0,10),by:currentUser,at:new Date().toISOString()}];
-  await fbUpdateTask(pid,tid,{notes});toast("備註已新增");
-}
+async function fbAddProject(n,pri){try{await addDoc(collection(db,"projects"),{name:n,priority:pri,createdBy:currentUser,createdAt:serverTimestamp()});toast("已建立專案")}catch(e){toast("失敗："+e.message)}}
+async function fbDeleteProject(pid){try{const ts=await getDocs(collection(db,"projects",pid,"tasks"));for(const t of ts.docs)await deleteDoc(doc(db,"projects",pid,"tasks",t.id));await deleteDoc(doc(db,"projects",pid));toast("已刪除")}catch(e){toast("失敗："+e.message)}}
+async function fbAddTask(pid,task){try{await addDoc(collection(db,"projects",pid,"tasks"),{...task,notes:[],statusHistory:[{from:null,to:task.status,at:new Date().toISOString(),by:currentUser}],createdAt:serverTimestamp(),updatedAt:serverTimestamp()});toast("已新增")}catch(e){toast("失敗："+e.message)}}
+async function fbUpdateTask(pid,tid,u){try{await updateDoc(doc(db,"projects",pid,"tasks",tid),{...u,updatedAt:serverTimestamp()})}catch(e){toast("失敗："+e.message)}}
+async function fbDeleteTask(pid,tid){try{await deleteDoc(doc(db,"projects",pid,"tasks",tid));toast("已刪除")}catch(e){toast("失敗："+e.message)}}
+async function fbCycleStatus(pid,task){const order=["not_started","in_progress","done","blocked"];const ns=order[(order.indexOf(task.status)+1)%4];const h=[...(task.statusHistory||[]),{from:task.status,to:ns,at:new Date().toISOString(),by:currentUser}];await fbUpdateTask(pid,task.id,{status:ns,statusHistory:h})}
+async function fbAddNote(pid,tid,text,existing){const notes=[...(existing||[]),{text,date:new Date().toISOString().slice(0,10),by:currentUser,at:new Date().toISOString()}];await fbUpdateTask(pid,tid,{notes});toast("備註已新增")}
 
 /* ═══ RENDER ═══ */
 function syncAllInputs(){
-  // New project
   const np=document.getElementById("newProjName");if(np)newProjectName=np.value;
-  // New task
   const nt=document.getElementById("newTaskText"),nd=document.getElementById("newTaskDesc"),ndu=document.getElementById("newTaskDue");
   if(nt)newTask.text=nt.value;if(nd)newTask.description=nd.value;if(ndu)newTask.due=ndu.value;
-  // Edit task
   const et=document.getElementById("editText"),ed=document.getElementById("editDesc"),edu=document.getElementById("editDue");
   if(et)editData.text=et.value;if(ed)editData.description=ed.value;if(edu)editData.due=edu.value;
-  // Note
   const ni=document.getElementById("noteInput");if(ni)window._pendingNote=ni.value;
-  // Search - don't sync, it uses oninput already
 }
+
 function render(){
   syncAllInputs();
   const el=document.getElementById("app");
-  if(!currentUser){el.innerHTML=renderIdentity();return}
+  if(!isLoggedIn){el.innerHTML=renderAuth();return}
   const loadingEl=document.getElementById("loading");if(loadingEl)loadingEl.style.display="none";
 
   const allTasks=projects.flatMap(p=>p.tasks);
   const counts=STATUS.map(s=>({...s,count:allTasks.filter(t=>t.status===s.v).length}));
 
-  // Due in 3 days alert items
   const today=new Date();today.setHours(0,0,0,0);
   const dueSoonItems=[];
   projects.forEach(p=>{p.tasks.forEach(t=>{
     if(t.status==="done"||!t.due)return;
-    const assignees=getAssignees(t);
-    if(!assignees.includes(currentUser))return;
+    if(!getAssignees(t).includes(currentUser))return;
     const dd=new Date(t.due+"T00:00:00"),diff=Math.ceil((dd-today)/864e5);
     if(diff<=3)dueSoonItems.push({...t,projectName:p.name,diff});
   })});
   dueSoonItems.sort((a,b)=>a.diff-b.diff);
 
-  // Filter
   let filtered=projects;
-  if(viewMode==="mine"){
-    filtered=filtered.map(p=>({...p,tasks:p.tasks.filter(t=>isMyTask(t))})).filter(p=>p.tasks.length>0||p.createdBy===currentUser);
-  }
+  if(viewMode==="mine")filtered=filtered.map(p=>({...p,tasks:p.tasks.filter(t=>isMyTask(t))})).filter(p=>p.tasks.length>0||p.createdBy===currentUser);
   if(priorityFilter!=="all")filtered=filtered.filter(p=>p.priority===priorityFilter);
   filtered=filtered.map(p=>({...p,tasks:statusFilter==="all"?p.tasks:p.tasks.filter(t=>t.status===statusFilter)})).filter(p=>statusFilter==="all"||p.tasks.length>0);
-  // Search
-  if(searchQuery){
-    const q=searchQuery.toLowerCase();
-    filtered=filtered.map(p=>({...p,tasks:p.tasks.filter(t=>t.text?.toLowerCase().includes(q)||t.description?.toLowerCase().includes(q)||getAssignees(t).some(a=>a.toLowerCase().includes(q)))})).filter(p=>p.name?.toLowerCase().includes(q)||p.tasks.length>0);
-  }
+  if(searchQuery){const q=searchQuery.toLowerCase();filtered=filtered.map(p=>({...p,tasks:p.tasks.filter(t=>t.text?.toLowerCase().includes(q)||t.description?.toLowerCase().includes(q)||getAssignees(t).some(a=>a.toLowerCase().includes(q)))})).filter(p=>p.name?.toLowerCase().includes(q)||p.tasks.length>0)}
 
   let h=`<div class="topbar">
     <div class="topbar-left"><div class="topbar-logo">◈</div><span class="topbar-title">專案追蹤器</span></div>
-    <div class="topbar-user"><div class="topbar-avatar">${currentUser.charAt(0)}</div><span class="topbar-name">${esc(currentUser)}</span><button class="topbar-switch" onclick="window.switchUser()">切換</button></div>
+    <div class="topbar-user"><div class="topbar-avatar">${currentUser.charAt(0)}</div><span class="topbar-name">${esc(currentUser)}</span><button class="topbar-btn" onclick="window.logout()">登出</button></div>
   </div><div class="container">`;
 
-  // Due alert
   if(dueSoonItems.length>0){
-    h+=`<div class="due-alert fu"><div class="due-alert-title">⏰ 即將到期的工作（${dueSoonItems.length} 項）</div>`;
-    dueSoonItems.forEach(t=>{
-      const di=dueInfo(t.due,t.status);
-      h+=`<div class="due-alert-item"><span class="due-tag ${di.cls}" style="font-size:12px">📅 ${di.l}</span><span style="flex:1;font-size:14px">${esc(t.text)}</span><span class="due-alert-proj">${esc(t.projectName)}</span></div>`;
-    });
+    h+=`<div class="due-alert fu"><div class="due-alert-title">⏰ 即將到期（${dueSoonItems.length} 項）</div>`;
+    dueSoonItems.forEach(t=>{const di=dueInfo(t.due,t.status);h+=`<div class="due-alert-item"><span class="due-tag ${di.cls}" style="font-size:12px">📅 ${di.l}</span><span style="flex:1;font-size:14px">${esc(t.text)}</span><span class="due-alert-proj">${esc(t.projectName)}</span></div>`});
     h+=`</div>`;
   }
 
-  // Search
   h+=`<div class="search-bar"><div class="search-wrap"><span class="search-icon">🔍</span><input class="search-input" placeholder="搜尋專案或工作項目..." value="${esc(searchQuery)}" oninput="window.setSearch(this.value)"></div></div>`;
+  h+=`<div class="view-toggle"><button class="view-btn ${viewMode==='all'?'on':''}" onclick="window.setView('all')">👥 全部人</button><button class="view-btn ${viewMode==='mine'?'on':''}" onclick="window.setView('mine')">👤 只看我的</button></div>`;
+  h+=`<div class="filter-row"><button class="chip ${priorityFilter==='all'?'on':''}" onclick="window.setPri('all')">全部專案</button>${PRIS.map(p=>`<button class="chip ${priorityFilter===p.v?'on':''}" onclick="window.setPri('${p.v}')">${p.l}</button>`).join("")}</div>`;
+  h+=`<div class="filter-row"><button class="chip ${statusFilter==='all'?'on':''}" onclick="window.setSt('all')">全部 ${allTasks.length}</button>${counts.map(s=>`<button class="chip ${statusFilter===s.v?'on':''}" style="${statusFilter===s.v?`background:${s.rc};color:#fff;border-color:${s.rc}`:`color:${s.rc};border-color:${s.rc}44`}" onclick="window.setSt('${s.v}')">${s.i} ${s.l} ${s.count}</button>`).join("")}</div>`;
 
-  // View toggle
-  h+=`<div class="view-toggle">
-    <button class="view-btn ${viewMode==='all'?'on':''}" onclick="window.setView('all')">👥 全部人</button>
-    <button class="view-btn ${viewMode==='mine'?'on':''}" onclick="window.setView('mine')">👤 只看我的</button>
-  </div>`;
+  if(!showNewProject){h+=`<button class="new-proj-btn" onclick="window.showNewProjForm()"><span style="font-size:22px;font-weight:300">+</span> 建立新專案</button>`}
+  else{h+=`<div class="form-card fu"><div class="form-title">建立新專案</div><input class="input" id="newProjName" placeholder="專案名稱" value="${esc(newProjectName)}"><div class="form-label">重要性</div><div class="status-picker">${PRIS.map(p=>`<button class="status-opt ${newProjectPriority===p.v?'active':''}" style="${newProjectPriority===p.v?`background:${p.css==='urgent'?'var(--urgent-bg)':p.css==='important'?'var(--important-bg)':'var(--normal-bg)'};color:${p.css==='urgent'?'var(--urgent)':p.css==='important'?'var(--important)':'var(--normal)'};border-color:${p.css==='urgent'?'var(--urgent)':p.css==='important'?'var(--important)':'var(--normal)'}`:''}" onclick="window.setNewProjPri('${p.v}')">${p.l}</button>`).join("")}</div><div class="form-row"><button class="btn-cancel" onclick="window.hideNewProj()">取消</button><button class="btn-ok" onclick="window.doAddProject()">建立</button></div></div>`}
 
-  // Priority filter
-  h+=`<div class="filter-row">
-    <button class="chip ${priorityFilter==='all'?'on':''}" onclick="window.setPri('all')">全部專案</button>
-    ${PRIS.map(p=>`<button class="chip ${priorityFilter===p.v?'on':''}" onclick="window.setPri('${p.v}')">${p.l}</button>`).join("")}
-  </div>`;
-
-  // Status filter
-  h+=`<div class="filter-row">
-    <button class="chip ${statusFilter==='all'?'on':''}" onclick="window.setSt('all')">全部 ${allTasks.length}</button>
-    ${counts.map(s=>`<button class="chip ${statusFilter===s.v?'on':''}" style="${statusFilter===s.v?`background:${s.rc};color:#fff;border-color:${s.rc}`:`color:${s.rc};border-color:${s.rc}44`}" onclick="window.setSt('${s.v}')">${s.i} ${s.l} ${s.count}</button>`).join("")}
-  </div>`;
-
-  // New project
-  if(!showNewProject){
-    h+=`<button class="new-proj-btn" onclick="window.showNewProjForm()"><span style="font-size:22px;font-weight:300">+</span> 建立新專案</button>`;
-  }else{
-    h+=`<div class="form-card fu">
-      <div class="form-title">建立新專案</div>
-      <input class="input" id="newProjName" placeholder="專案名稱" value="${esc(newProjectName)}">
-      <div class="form-label">重要性</div>
-      <div class="status-picker">${PRIS.map(p=>`<button class="status-opt ${newProjectPriority===p.v?'active':''}" style="${newProjectPriority===p.v?`background:${p.css==='urgent'?'var(--urgent-bg)':p.css==='important'?'var(--important-bg)':'var(--normal-bg)'};color:${p.css==='urgent'?'var(--urgent)':p.css==='important'?'var(--important)':'var(--normal)'};border-color:${p.css==='urgent'?'var(--urgent)':p.css==='important'?'var(--important)':'var(--normal)'}`:''}" onclick="window.setNewProjPri('${p.v}')">${p.l}</button>`).join("")}</div>
-      <div class="form-row"><button class="btn-cancel" onclick="window.hideNewProj()">取消</button><button class="btn-ok" onclick="window.doAddProject()">建立</button></div>
-    </div>`;
-  }
-
-  // Empty
   if(!filtered.length)h+=`<div class="empty fu"><div class="empty-icon">📂</div><p class="empty-text">${searchQuery?"找不到符合的項目":"還沒有專案，點擊上方建立"}</p></div>`;
 
-  // Projects
   filtered.forEach(proj=>{
-    const prog=projProg(proj.tasks);
-    const done=proj.tasks.filter(t=>t.status==="done").length;
-    const blocked=proj.tasks.filter(t=>t.status==="blocked").length;
-    const isOpen=expandedProjects[proj.id]!==false;
-    const pri=gp(proj.priority);
-
-    h+=`<div class="proj-card fu"><div class="proj-head">
-      <div class="proj-toggle" onclick="window.toggleProj('${proj.id}')">
-        <span class="proj-arrow ${isOpen?'open':''}">▶</span>
-        <span class="proj-name">${esc(proj.name)}</span>
-        <span class="pri-tag ${pri.css}">${pri.l}</span>
-      </div>
-      <div class="proj-right">
-        ${proj.tasks.length?`<span class="meta-badge">${done}/${proj.tasks.length}</span>`:''}
-        ${blocked>0?`<span class="meta-badge warn">✕${blocked}</span>`:''}
-        ${proj.createdBy===currentUser?(deleteConfirm===`proj-${proj.id}`?`<button class="danger-sm" onclick="event.stopPropagation();window.doDelProj('${proj.id}')">確認刪除</button><button class="tiny-btn" onclick="event.stopPropagation();window.cancelDel()">取消</button>`:`<button class="tiny-btn" onclick="event.stopPropagation();window.confirmDel('proj-${proj.id}')">🗑</button>`):''}
-      </div>
-    </div>`;
-
+    const prog=projProg(proj.tasks),done=proj.tasks.filter(t=>t.status==="done").length,blocked=proj.tasks.filter(t=>t.status==="blocked").length,isOpen=expandedProjects[proj.id]!==false,pri=gp(proj.priority);
+    h+=`<div class="proj-card fu"><div class="proj-head"><div class="proj-toggle" onclick="window.toggleProj('${proj.id}')"><span class="proj-arrow ${isOpen?'open':''}">▶</span><span class="proj-name">${esc(proj.name)}</span><span class="pri-tag ${pri.css}">${pri.l}</span></div><div class="proj-right">${proj.tasks.length?`<span class="meta-badge">${done}/${proj.tasks.length}</span>`:''}${blocked>0?`<span class="meta-badge warn">✕${blocked}</span>`:''}${proj.createdBy===currentUser?(deleteConfirm===`proj-${proj.id}`?`<button class="danger-sm" onclick="event.stopPropagation();window.doDelProj('${proj.id}')">確認</button><button class="tiny-btn" onclick="event.stopPropagation();window.cancelDel()">取消</button>`:`<button class="tiny-btn" onclick="event.stopPropagation();window.confirmDel('proj-${proj.id}')">🗑</button>`):''}  </div></div>`;
     if(proj.tasks.length>0)h+=`<div class="prog-wrap"><div class="prog-track"><div class="prog-fill" style="width:${prog}%"></div></div><span class="prog-pct">${prog}%</span></div>`;
-
     if(isOpen){
       h+=`<div class="task-list">`;
       proj.tasks.forEach(task=>{
-        const s=gs(task.status);
-        const assignees=getAssignees(task);
-        const isMine=assignees.includes(currentUser);
-        const di=dueInfo(task.due,task.status);
+        const s=gs(task.status),assignees=getAssignees(task),isMine=assignees.includes(currentUser),di=dueInfo(task.due,task.status);
         const isEdit=editingTask&&editingTask.pid===proj.id&&editingTask.tid===task.id;
         const isAddNote=addingNoteTo&&addingNoteTo.pid===proj.id&&addingNoteTo.tid===task.id;
         const notes=Array.isArray(task.notes)?task.notes:[];
-
         h+=`<div class="task-card ${isMine?'mine':''}" style="border-left-color:${s.rc}">`;
-        if(isEdit){
-          h+=renderEditForm(proj.id,task);
-        }else{
-          h+=`<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px">
-            <div style="flex:1">
-              <span class="task-text">${esc(task.text)}</span>
-              ${task.description?`<div class="task-desc">${esc(task.description)}</div>`:''}
-              <div class="task-meta">
-                ${assignees.map(a=>`<span class="assignee-tag">👤 ${esc(a)}</span>`).join("")}
-                ${di?`<span class="due-tag ${di.cls}">📅 ${di.l}</span>`:''}
-              </div>
-            </div>
-            ${isMine?`<div style="display:flex;gap:4px;flex-shrink:0">
-              <button class="tiny-btn" onclick="window.startEdit('${proj.id}','${task.id}')">✏️</button>
-              ${deleteConfirm===task.id?`<button class="danger-sm" onclick="window.doDelTask('${proj.id}','${task.id}')">刪除</button><button class="tiny-btn" onclick="window.cancelDel()">取消</button>`:`<button class="tiny-btn" onclick="window.confirmDel('${task.id}')">🗑</button>`}
-            </div>`:''}
-          </div>
-          <div class="task-bottom">
-            ${isMine?`<button class="status-badge" style="background:${s.bg};color:${s.rc};border:2px solid ${s.rc}30" onclick="window.cycleSt('${proj.id}','${task.id}')"><span style="font-size:11px">${s.i}</span>${s.l}</button>`:`<span class="status-badge" style="background:${s.bg};color:${s.rc};border:2px solid ${s.rc}30;cursor:default"><span style="font-size:11px">${s.i}</span>${s.l}</span>`}
-            <div class="bar-track"><div class="bar-fill" style="width:${s.p}%;background:${s.rc}"></div></div>
-            <span class="pct-label" style="color:${s.rc}">${s.p}%</span>
-          </div>`;
-
-          // Notes section
-          h+=`<div class="notes-section">
-            <div class="notes-label" onclick="${isMine?`window.startNote('${proj.id}','${task.id}')`:''}">📝 進度備註 (${notes.length}) ${isMine?'<span style="font-size:12px;color:var(--accent)">+ 新增</span>':''}</div>`;
-          if(notes.length>0){
-            notes.slice().reverse().slice(0,3).forEach(n=>{
-              h+=`<div class="note-item"><div class="note-date">${n.date||''} — ${esc(n.by||'')}</div>${esc(n.text)}</div>`;
-            });
-            if(notes.length>3)h+=`<div style="font-size:12px;color:var(--text3);text-align:center;padding:4px">還有 ${notes.length-3} 筆更早的備註</div>`;
-          }
-          if(isAddNote){
-            h+=`<div style="margin-top:6px;display:flex;flex-direction:column;gap:8px">
-              <textarea class="note-input" id="noteInput" placeholder="這週做了什麼、遇到什麼問題...">${esc(window._pendingNote||"")}</textarea>
-              <div class="form-row"><button class="btn-cancel" onclick="window.cancelNote()">取消</button><button class="btn-ok" onclick="window.saveNote('${proj.id}','${task.id}')">儲存</button></div>
-            </div>`;
-          }
+        if(isEdit){h+=renderEditForm(proj.id,task)}
+        else{
+          h+=`<div style="display:flex;justify-content:space-between;align-items:flex-start;gap:10px"><div style="flex:1"><span class="task-text">${esc(task.text)}</span>${task.description?`<div class="task-desc">${esc(task.description)}</div>`:''}
+          <div class="task-meta">${assignees.map(a=>`<span class="assignee-tag">👤 ${esc(a)}</span>`).join("")}${di?`<span class="due-tag ${di.cls}">📅 ${di.l}</span>`:''}</div></div>
+          ${isMine?`<div style="display:flex;gap:4px;flex-shrink:0"><button class="tiny-btn" onclick="window.startEdit('${proj.id}','${task.id}')">✏️</button>${deleteConfirm===task.id?`<button class="danger-sm" onclick="window.doDelTask('${proj.id}','${task.id}')">刪除</button><button class="tiny-btn" onclick="window.cancelDel()">取消</button>`:`<button class="tiny-btn" onclick="window.confirmDel('${task.id}')">🗑</button>`}</div>`:''}</div>
+          <div class="task-bottom">${isMine?`<button class="status-badge" style="background:${s.bg};color:${s.rc};border:2px solid ${s.rc}30" onclick="window.cycleSt('${proj.id}','${task.id}')"><span style="font-size:11px">${s.i}</span>${s.l}</button>`:`<span class="status-badge" style="background:${s.bg};color:${s.rc};border:2px solid ${s.rc}30;cursor:default"><span style="font-size:11px">${s.i}</span>${s.l}</span>`}<div class="bar-track"><div class="bar-fill" style="width:${s.p}%;background:${s.rc}"></div></div><span class="pct-label" style="color:${s.rc}">${s.p}%</span></div>`;
+          h+=`<div class="notes-section"><div class="notes-label" onclick="${isMine?`window.startNote('${proj.id}','${task.id}')`:''}">📝 進度備註 (${notes.length}) ${isMine?'<span style="font-size:12px;color:var(--accent)">+ 新增</span>':''}</div>`;
+          if(notes.length>0){notes.slice().reverse().slice(0,3).forEach(n=>{h+=`<div class="note-item"><div class="note-date">${n.date||''} — ${esc(n.by||'')}</div>${esc(n.text)}</div>`});if(notes.length>3)h+=`<div style="font-size:12px;color:var(--text3);text-align:center;padding:4px">還有 ${notes.length-3} 筆</div>`}
+          if(isAddNote){h+=`<div style="margin-top:6px;display:flex;flex-direction:column;gap:8px"><textarea class="note-input" id="noteInput" placeholder="這週做了什麼...">${esc(window._pendingNote||"")}</textarea><div class="form-row"><button class="btn-cancel" onclick="window.cancelNote()">取消</button><button class="btn-ok" onclick="window.saveNote('${proj.id}','${task.id}')">儲存</button></div></div>`}
           h+=`</div>`;
         }
         h+=`</div>`;
       });
-
-      // Add task
-      if(addingTaskTo===proj.id){
-        h+=renderAddForm(proj.id);
-      }else{
-        h+=`<button class="add-task-btn" onclick="window.startAddTask('${proj.id}')">+ 新增工作項目</button>`;
-      }
+      if(addingTaskTo===proj.id){h+=renderAddForm(proj.id)}else{h+=`<button class="add-task-btn" onclick="window.startAddTask('${proj.id}')">+ 新增工作項目</button>`}
       h+=`</div>`;
     }
     h+=`</div>`;
   });
-
   h+=`</div>`;
   el.innerHTML=h;
-  // Restore focus to active input
   requestAnimationFrame(()=>{
-    const active=document.activeElement;
-    if(addingTaskTo){const el=document.getElementById("newTaskText");if(el&&(!active||active===document.body)){el.focus();el.setSelectionRange(el.value.length,el.value.length)}}
-    if(editingTask){const el=document.getElementById("editText");if(el&&(!active||active===document.body)){el.focus();el.setSelectionRange(el.value.length,el.value.length)}}
-    if(addingNoteTo){const el=document.getElementById("noteInput");if(el&&(!active||active===document.body)){el.focus();el.setSelectionRange(el.value.length,el.value.length)}}
+    if(addingTaskTo){const el=document.getElementById("newTaskText");if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length)}}
+    if(editingTask){const el=document.getElementById("editText");if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length)}}
+    if(addingNoteTo){const el=document.getElementById("noteInput");if(el){el.focus();el.setSelectionRange(el.value.length,el.value.length)}}
   });
 }
 
-function renderIdentity(){
+/* ═══ AUTH SCREEN ═══ */
+function renderAuth(){
   const opts=members.length>0?members.map(m=>`<option value="${esc(m.name)}">${esc(m.name)}</option>`).join(""):`<option value="" disabled>載入組員中...</option>`;
-  return `<div class="id-overlay"><div class="id-card fu">
-    <h2>👋 你好</h2><p>選擇你的身份，開始更新工作進度</p>
-    <select class="id-select" id="idSelect"><option value="">— 請選擇 —</option>${opts}</select>
-    <button class="id-enter" onclick="window.enterApp()">進入</button>
-  </div></div>`;
+  let h=`<div class="auth-overlay"><div class="auth-card fu">`;
+
+  if(authScreen==="select"){
+    h+=`<h2>👋 你好</h2><p>選擇你的身份，開始使用</p>
+    <select class="auth-select" id="authUser"><option value="">— 請選擇 —</option>${opts}</select>
+    <button class="auth-btn" onclick="window.authSelectUser()">下一步</button>`;
+  }
+  else if(authScreen==="password"){
+    h+=`<h2>🔐 輸入密碼</h2><p>${esc(selectedUser)}，請輸入你的密碼</p>
+    ${authError?`<div class="auth-error">${authError}</div>`:''}
+    <input class="auth-input" type="password" id="authPw" placeholder="密碼" onkeydown="if(event.key==='Enter')window.authLogin()">
+    <button class="auth-btn" onclick="window.authLogin()">登入</button>
+    <button class="auth-link" onclick="window.authShowForgot()">忘記密碼？</button>
+    <button class="auth-link" style="margin-left:12px" onclick="window.authBack()">← 返回</button>`;
+  }
+  else if(authScreen==="setup"){
+    h+=`<h2>🔑 設定密碼</h2><p>${esc(selectedUser)}，這是你第一次登入，請設定密碼</p>
+    ${authError?`<div class="auth-error">${authError}</div>`:''}
+    <input class="auth-input" type="password" id="authPw1" placeholder="輸入新密碼" onkeydown="if(event.key==='Enter')document.getElementById('authPw2')?.focus()">
+    <input class="auth-input" type="password" id="authPw2" placeholder="再次輸入確認" onkeydown="if(event.key==='Enter')window.authSetup()">
+    <button class="auth-btn" onclick="window.authSetup()">設定密碼並登入</button>
+    <button class="auth-link" onclick="window.authBack()">← 返回</button>`;
+  }
+  else if(authScreen==="forgot"){
+    h+=`<h2>🔄 忘記密碼</h2><p>請聯繫管理員，請管理員在管理版幫你重置密碼。</p>
+    ${authSuccess?`<div class="auth-success">${authSuccess}</div>`:''}
+    <p style="font-size:13px;color:var(--text2);margin-top:12px">管理員重置後，你下次登入就會引導你重新設定密碼。</p>
+    <button class="auth-link" onclick="window.authBack()">← 返回登入</button>`;
+  }
+
+  h+=`</div></div>`;
+  return h;
 }
 
+/* ═══ AUTH HANDLERS ═══ */
+window.authSelectUser=function(){
+  const sel=document.getElementById("authUser");
+  if(!sel||!sel.value){alert("請先選擇身份");return}
+  selectedUser=sel.value;authError="";
+  // Check if has password
+  checkPassword(selectedUser,"__check__").then(r=>{
+    if(r==="no_password"){authScreen="setup";render()}
+    else{authScreen="password";render();setTimeout(()=>document.getElementById("authPw")?.focus(),50)}
+  });
+};
+window.authLogin=async function(){
+  const pw=document.getElementById("authPw")?.value;
+  if(!pw){authError="請輸入密碼";render();return}
+  const r=await checkPassword(selectedUser,pw);
+  if(r==="ok"){currentUser=selectedUser;isLoggedIn=true;localStorage.setItem("tracker-user",currentUser);localStorage.setItem("tracker-auth","1");authError="";render()}
+  else if(r==="no_password"){authScreen="setup";authError="";render()}
+  else{authError="密碼錯誤，請重新輸入";render()}
+};
+window.authSetup=async function(){
+  const pw1=document.getElementById("authPw1")?.value;
+  const pw2=document.getElementById("authPw2")?.value;
+  if(!pw1){authError="請輸入密碼";render();return}
+  if(pw1.length<3){authError="密碼至少 3 個字元";render();return}
+  if(pw1!==pw2){authError="兩次密碼不一致";render();return}
+  const ok=await setPassword(selectedUser,pw1);
+  if(ok){currentUser=selectedUser;isLoggedIn=true;localStorage.setItem("tracker-user",currentUser);localStorage.setItem("tracker-auth","1");authError="";toast("密碼已設定");render()}
+  else{authError="設定失敗，請重試";render()}
+};
+window.authShowForgot=function(){authScreen="forgot";authError="";authSuccess="";render()};
+window.authBack=function(){authScreen="select";authError="";authSuccess="";render()};
+window.logout=function(){currentUser="";isLoggedIn=false;localStorage.removeItem("tracker-user");localStorage.removeItem("tracker-auth");authScreen="select";authError="";render()};
+
+// Auto-login check
+const savedUser=localStorage.getItem("tracker-user");
+const savedAuth=localStorage.getItem("tracker-auth");
+if(savedUser&&savedAuth){currentUser=savedUser;isLoggedIn=true}
+
+/* ═══ EDIT/ADD FORMS ═══ */
 function renderEditForm(pid,task){
   const assignees=editData.assignees||[];
-  return `<div style="display:flex;flex-direction:column;gap:12px">
-    <input class="input" id="editText" value="${esc(editData.text)}">
-    <textarea class="textarea" id="editDesc" placeholder="描述說明">${esc(editData.description)}</textarea>
-    <div class="field-row">
-      <div class="field-col"><label class="form-label">預計完成日</label><input type="date" class="input-sm" id="editDue" value="${editData.due||''}"></div>
-    </div>
-    <div><label class="form-label">負責人（可多選）</label>
-      <div class="assignee-grid">${members.map(m=>`<button class="assignee-opt ${assignees.includes(m.name)?'selected':''}" onclick="window.toggleEditAssignee('${esc(m.name)}')">${esc(m.name)}</button>`).join("")}</div>
-    </div>
-    <div><label class="form-label">狀態</label>
-      <div class="status-picker">${STATUS.map(o=>`<button class="status-opt ${editData.status===o.v?'active':''}" style="${editData.status===o.v?`background:${o.bg};color:${o.rc};border-color:${o.rc}`:''}" onclick="window.setEditSt('${o.v}')">${o.i} ${o.l}</button>`).join("")}</div>
-    </div>
-    <div class="form-row"><button class="btn-cancel" onclick="window.cancelEdit()">取消</button><button class="btn-ok" onclick="window.saveEdit('${pid}','${task.id}')">儲存</button></div>
-  </div>`;
+  return `<div style="display:flex;flex-direction:column;gap:12px"><input class="input" id="editText" value="${esc(editData.text)}"><textarea class="textarea" id="editDesc" placeholder="描述">${esc(editData.description)}</textarea><div class="field-row"><div class="field-col"><label class="form-label">預計完成日</label><input type="date" class="input-sm" id="editDue" value="${editData.due||''}"></div></div><div><label class="form-label">負責人（可多選）</label><div class="assignee-grid">${members.map(m=>`<button class="assignee-opt ${assignees.includes(m.name)?'selected':''}" onclick="window.toggleEditAssignee('${esc(m.name)}')">${esc(m.name)}</button>`).join("")}</div></div><div><label class="form-label">狀態</label><div class="status-picker">${STATUS.map(o=>`<button class="status-opt ${editData.status===o.v?'active':''}" style="${editData.status===o.v?`background:${o.bg};color:${o.rc};border-color:${o.rc}`:''}" onclick="window.setEditSt('${o.v}')">${o.i} ${o.l}</button>`).join("")}</div></div><div class="form-row"><button class="btn-cancel" onclick="window.cancelEdit()">取消</button><button class="btn-ok" onclick="window.saveEdit('${pid}','${task.id}')">儲存</button></div></div>`;
 }
-
 function renderAddForm(pid){
   const assignees=newTask.assignees||[];
-  return `<div class="add-task-form fu">
-    <input class="input" placeholder="工作項目名稱" id="newTaskText" value="${esc(newTask.text)}">
-    <textarea class="textarea" placeholder="描述說明（選填）" id="newTaskDesc">${esc(newTask.description)}</textarea>
-    <div class="field-row">
-      <div class="field-col"><label class="form-label">預計完成日</label><input type="date" class="input-sm" id="newTaskDue" value="${newTask.due}"></div>
-    </div>
-    <div><label class="form-label">負責人（可多選，預設為自己）</label>
-      <div class="assignee-grid">${members.map(m=>`<button class="assignee-opt ${assignees.includes(m.name)?'selected':''}" onclick="window.toggleNewAssignee('${esc(m.name)}')">${esc(m.name)}</button>`).join("")}</div>
-    </div>
-    <div><label class="form-label">狀態</label>
-      <div class="status-picker">${STATUS.map(o=>`<button class="status-opt ${newTask.status===o.v?'active':''}" style="${newTask.status===o.v?`background:${o.bg};color:${o.rc};border-color:${o.rc}`:''}" onclick="window.setNewTaskSt('${o.v}')">${o.i} ${o.l}</button>`).join("")}</div>
-    </div>
-    <div class="form-row"><button class="btn-cancel" onclick="window.cancelAddTask()">完成</button><button class="btn-ok" onclick="window.doAddTask('${pid}')">新增</button></div>
-    <p style="font-size:13px;color:var(--text3);text-align:center">💡 可連續新增，按「完成」關閉</p>
-  </div>`;
+  return `<div class="add-task-form fu"><input class="input" placeholder="工作項目名稱" id="newTaskText" value="${esc(newTask.text)}"><textarea class="textarea" placeholder="描述說明（選填）" id="newTaskDesc">${esc(newTask.description)}</textarea><div class="field-row"><div class="field-col"><label class="form-label">預計完成日</label><input type="date" class="input-sm" id="newTaskDue" value="${newTask.due}"></div></div><div><label class="form-label">負責人（可多選，預設自己）</label><div class="assignee-grid">${members.map(m=>`<button class="assignee-opt ${assignees.includes(m.name)?'selected':''}" onclick="window.toggleNewAssignee('${esc(m.name)}')">${esc(m.name)}</button>`).join("")}</div></div><div><label class="form-label">狀態</label><div class="status-picker">${STATUS.map(o=>`<button class="status-opt ${newTask.status===o.v?'active':''}" style="${newTask.status===o.v?`background:${o.bg};color:${o.rc};border-color:${o.rc}`:''}" onclick="window.setNewTaskSt('${o.v}')">${o.i} ${o.l}</button>`).join("")}</div></div><div class="form-row"><button class="btn-cancel" onclick="window.cancelAddTask()">完成</button><button class="btn-ok" onclick="window.doAddTask('${pid}')">新增</button></div><p style="font-size:13px;color:var(--text3);text-align:center">💡 可連續新增，按「完成」關閉</p></div>`;
 }
 
 /* ═══ HANDLERS ═══ */
-window.enterApp=function(){const sel=document.getElementById("idSelect");if(!sel||!sel.value){alert("請先選擇你的身份");return}currentUser=sel.value;localStorage.setItem("tracker-user",currentUser);render()};
-window.switchUser=function(){currentUser="";localStorage.removeItem("tracker-user");render()};
+function syncNewProjInputs(){const el=document.getElementById("newProjName");if(el)newProjectName=el.value}
+function syncNewTaskInputs(){const t=document.getElementById("newTaskText"),d=document.getElementById("newTaskDesc"),du=document.getElementById("newTaskDue");if(t)newTask.text=t.value;if(d)newTask.description=d.value;if(du)newTask.due=du.value}
+function syncEditInputs(){const t=document.getElementById("editText"),d=document.getElementById("editDesc"),du=document.getElementById("editDue");if(t)editData.text=t.value;if(d)editData.description=d.value;if(du)editData.due=du.value}
+
 window.toggleProj=id=>{expandedProjects[id]=expandedProjects[id]===false;render()};
 window.setSt=v=>{statusFilter=statusFilter===v?"all":v;render()};
 window.setPri=v=>{priorityFilter=priorityFilter===v?"all":v;render()};
@@ -533,79 +447,29 @@ window.setSearch=v=>{searchQuery=v;render()};
 window.confirmDel=id=>{deleteConfirm=id;render()};
 window.cancelDel=()=>{deleteConfirm=null;render()};
 
-// Project
-function syncNewProjInputs(){
-  const el=document.getElementById("newProjName");if(el)newProjectName=el.value;
-}
-function syncNewTaskInputs(){
-  const t=document.getElementById("newTaskText"),d=document.getElementById("newTaskDesc"),du=document.getElementById("newTaskDue");
-  if(t)newTask.text=t.value;if(d)newTask.description=d.value;if(du)newTask.due=du.value;
-}
-function syncEditInputs(){
-  const t=document.getElementById("editText"),d=document.getElementById("editDesc"),du=document.getElementById("editDue");
-  if(t)editData.text=t.value;if(d)editData.description=d.value;if(du)editData.due=du.value;
-}
-
 window.showNewProjForm=()=>{showNewProject=true;render();setTimeout(()=>document.getElementById("newProjName")?.focus(),50)};
 window.hideNewProj=()=>{showNewProject=false;render()};
 window.setNewProjPri=v=>{syncNewProjInputs();newProjectPriority=v;render()};
 window.doAddProject=async()=>{const name=document.getElementById("newProjName")?.value?.trim();if(!name)return toast("請輸入名稱");await fbAddProject(name,newProjectPriority);showNewProject=false;newProjectPriority="normal"};
 window.doDelProj=async pid=>{await fbDeleteProject(pid);deleteConfirm=null};
 
-// Task
-window.startAddTask=pid=>{addingTaskTo=pid;newTask={text:"",description:"",assignees:[currentUser],due:"",status:"not_started"};render();setTimeout(()=>document.getElementById("newTaskText")?.focus(),50)};
+window.startAddTask=pid=>{addingTaskTo=pid;newTask={text:"",description:"",assignees:[currentUser],due:"",status:"not_started"};render()};
 window.cancelAddTask=()=>{addingTaskTo=null;render()};
 window.setNewTaskSt=v=>{syncNewTaskInputs();newTask.status=v;render()};
-window.toggleNewAssignee=name=>{
-  syncNewTaskInputs();
-  const a=newTask.assignees||[];
-  newTask.assignees=a.includes(name)?a.filter(x=>x!==name):[...a,name];
-  render();
-};
-window.doAddTask=async pid=>{
-  syncNewTaskInputs();
-  if(!newTask.text.trim())return toast("請輸入名稱");
-  await fbAddTask(pid,{text:newTask.text.trim(),description:newTask.description.trim(),assignees:newTask.assignees,due:newTask.due,status:newTask.status});
-  newTask={text:"",description:"",assignees:[currentUser],due:"",status:"not_started"};
-  render();setTimeout(()=>document.getElementById("newTaskText")?.focus(),50);
-};
+window.toggleNewAssignee=name=>{syncNewTaskInputs();const a=newTask.assignees||[];newTask.assignees=a.includes(name)?a.filter(x=>x!==name):[...a,name];render()};
+window.doAddTask=async pid=>{syncNewTaskInputs();if(!newTask.text.trim())return toast("請輸入名稱");await fbAddTask(pid,{text:newTask.text.trim(),description:newTask.description.trim(),assignees:newTask.assignees,due:newTask.due,status:newTask.status});newTask={text:"",description:"",assignees:[currentUser],due:"",status:"not_started"};render()};
 
-// Edit
-window.startEdit=(pid,tid)=>{
-  const task=projects.find(p=>p.id===pid)?.tasks?.find(t=>t.id===tid);if(!task)return;
-  editingTask={pid,tid};
-  editData={text:task.text,description:task.description||"",assignees:getAssignees(task),due:task.due||"",status:task.status};
-  render();
-};
+window.startEdit=(pid,tid)=>{const task=projects.find(p=>p.id===pid)?.tasks?.find(t=>t.id===tid);if(!task)return;editingTask={pid,tid};editData={text:task.text,description:task.description||"",assignees:getAssignees(task),due:task.due||"",status:task.status};render()};
 window.cancelEdit=()=>{editingTask=null;render()};
 window.setEditSt=v=>{syncEditInputs();editData.status=v;render()};
-window.toggleEditAssignee=name=>{
-  syncEditInputs();
-  const a=editData.assignees||[];
-  editData.assignees=a.includes(name)?a.filter(x=>x!==name):[...a,name];
-  render();
-};
-window.saveEdit=async(pid,tid)=>{
-  syncEditInputs();
-  if(!editData.text.trim())return toast("名稱不能為空");
-  const task=projects.find(p=>p.id===pid)?.tasks?.find(t=>t.id===tid);
-  const updates={text:editData.text.trim(),description:editData.description,assignees:editData.assignees,due:editData.due,status:editData.status};
-  if(task&&editData.status!==task.status){
-    updates.statusHistory=[...(task.statusHistory||[]),{from:task.status,to:editData.status,at:new Date().toISOString(),by:currentUser}];
-  }
-  await fbUpdateTask(pid,tid,updates);editingTask=null;toast("已更新");render();
-};
+window.toggleEditAssignee=name=>{syncEditInputs();const a=editData.assignees||[];editData.assignees=a.includes(name)?a.filter(x=>x!==name):[...a,name];render()};
+window.saveEdit=async(pid,tid)=>{syncEditInputs();if(!editData.text.trim())return toast("名稱不能為空");const task=projects.find(p=>p.id===pid)?.tasks?.find(t=>t.id===tid);const u={text:editData.text.trim(),description:editData.description,assignees:editData.assignees,due:editData.due,status:editData.status};if(task&&editData.status!==task.status){u.statusHistory=[...(task.statusHistory||[]),{from:task.status,to:editData.status,at:new Date().toISOString(),by:currentUser}]}await fbUpdateTask(pid,tid,u);editingTask=null;toast("已更新");render()};
 window.doDelTask=async(pid,tid)=>{await fbDeleteTask(pid,tid);deleteConfirm=null};
 window.cycleSt=async(pid,tid)=>{const task=projects.find(p=>p.id===pid)?.tasks?.find(t=>t.id===tid);if(task&&isMyTask(task))await fbCycleStatus(pid,task)};
 
-// Notes
-window.startNote=(pid,tid)=>{addingNoteTo={pid,tid};window._pendingNote="";render();setTimeout(()=>document.getElementById("noteInput")?.focus(),50)};
+window.startNote=(pid,tid)=>{addingNoteTo={pid,tid};window._pendingNote="";render()};
 window.cancelNote=()=>{addingNoteTo=null;window._pendingNote="";render()};
-window.saveNote=async(pid,tid)=>{
-  const text=document.getElementById("noteInput")?.value?.trim();if(!text)return toast("請輸入備註");
-  const task=projects.find(p=>p.id===pid)?.tasks?.find(t=>t.id===tid);
-  await fbAddNote(pid,tid,text,task?.notes||[]);addingNoteTo=null;window._pendingNote="";
-};
+window.saveNote=async(pid,tid)=>{const text=document.getElementById("noteInput")?.value?.trim();if(!text)return toast("請輸入備註");const task=projects.find(p=>p.id===pid)?.tasks?.find(t=>t.id===tid);await fbAddNote(pid,tid,text,task?.notes||[]);addingNoteTo=null;window._pendingNote=""};
 </script>
 </body>
 </html>
